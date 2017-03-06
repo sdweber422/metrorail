@@ -31,35 +31,35 @@ _List of specifications (specs) for the completed goal. These are declarative se
 
 Expose the following commands (and more, if you need) using the `scripts` property of your `package.json`.
 
-- [X] `$ npm run test`: run all tests.
-- [X] `$ npm run repl`: open a REPL session with all your library code loaded.
-- [X] `$ npm run db:create`: create the database for the current `NODE_ENV`.
-- [X] `$ npm run db:migrate`: run all schema migrations for the database.
-- [X] `$ npm run db:seed`: insert seed (sample) data into the database.
-- [X] `$ npm run db:drop`: delete the database for the current `NODE_ENV`.
-- [X] `$ npm run db:reset`: drop, create, and migrate the database.
-- [X] `$ npm run db:console`: open a console session for running queries against the database.
+- [ ] `$ npm run test`: run all tests.
+- [ ] `$ npm run repl`: open a REPL session with all your library code loaded.
+- [ ] `$ npm run db:create`: create the database for the current `NODE_ENV`.
+- [ ] `$ npm run db:migrate`: run all schema migrations for the database.
+- [ ] `$ npm run db:seed`: insert seed (sample) data into the database.
+- [ ] `$ npm run db:drop`: delete the database for the current `NODE_ENV`.
+- [ ] `$ npm run db:reset`: drop, create, and migrate the database.
+- [ ] `$ npm run db:console`: open a console session for running queries against the database.
 
 #### User Stories
 
 Create models with interfaces to satisfy the following user stories, assuming the "user" in this case is a programmer using your data model.
 
 - [ ] As a user of the `Train` model, I can...
-  - [X] get the number of a particular train.
-  - [X] get the capacity for passengers of a particular train.
-  - [X] get the passengers of a particular train.
-  - [X] determine whether a particular train is full (at capacity) or not.
-  - [X] determine the current station of a particular train.
-  - [X] determine the next station of a particular train.
+  - [ ] get the number of a particular train.
+  - [ ] get the capacity for passengers of a particular train.
+  - [ ] get the passengers of a particular train.
+  - [ ] determine whether a particular train is full (at capacity) or not.
+  - [ ] determine the current station of a particular train.
+  - [ ] determine the next station of a particular train.
   - [ ] determine which train is arriving next at a particular station.
-  - [X] move a train to its next station.
+  - [ ] move a train to its next station.
   - [ ] offboard passengers whose destination is a train's current station.
   - [ ] onboard passengers of a train at the current station.
-  - [X] find a train by its number.
-  - [X] create a new train.
-  - [X] save new trains to the database.
-  - [X] update existing trains in the database.
-  - [X] delete a train from the database.
+  - [ ] find a train by its number.
+  - [ ] create a new train.
+  - [ ] save new trains to the database.
+  - [ ] update existing trains in the database.
+  - [ ] delete a train from the database.
 - [ ] As a user of the `Train` model, I receive appropriate and descriptive errors.
 - [ ] As a user of the `Station` model, I can run unit tests that exercise the specs for every public property, instance method, and class method.
 - [ ] As a user of the `Station` model, I can...
