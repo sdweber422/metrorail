@@ -4,8 +4,15 @@
   "private": true,
   "scripts": {
     "start": "NODE_ENV='development' && node ./bin/www",
-    "test": "mocha --recursive",
-    "test:watch": "mocha --recursive -w",
+    "test": "NODE_ENV='test' && mocha --recursive",
+    "test:watch": "NODE_ENV='test' && mocha --recursive -w",
+    "db:create": "createdb metrorail-development && createdb metrorail-test",
+    "db:migrate": "npm run psql:test && npm run psql:development && rm psql",
+    "db:seed": "node db/seeds/seed.js",
+    "db:drop": "dropdb metrorail-test && dropdb metrorail-development",
+    "db:reset": "npm run db:drop && npm run db:create && npm run db:migrate",
+    "psql:test": "cat db/models/trains.sql db/models/stations.sql db/models/passengers.sql | psql metrorail-test",
+    "psql:development": "cat db/models/trains.sql db/models/stations.sql db/models/passengers.sql | psql metrorail-development",
     "db:console": "psql metrorail-test"
   },
   "dependencies": {
