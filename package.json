@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "db:create": "createdb metrorail-development && createdb metrorail-test",
+    "db:migrate": "npm run psql:test && npm run psql:development",
+    "db:drop": "dropdb metrorail-test && dropdb metrorail-development",
+    "psql:test": "cat db/models/trains.sql db/models/stations.sql db/models/passengers.sql | psql metrorail-test",
+    "psql:development": "cat db/models/trains.sql db/models/stations.sql db/models/passengers.sql | psql metrorail-development"
   },
   "dependencies": {
     "body-parser": "~1.15.2",
