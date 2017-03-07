@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS stations;
+CREATE TABLE IF NOT EXISTS stations (
+  id SERIAL PRIMARY KEY,
+  location VARCHAR(32)
+);
