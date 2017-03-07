@@ -12,7 +12,8 @@
     "db:drop": "dropdb metrorail-test && dropdb metrorail-development",
     "db:reset": "npm run db:drop && npm run db:create && npm run db:migrate",
     "psql:test": "cat db/models/trains.sql db/models/stations.sql db/models/passengers.sql | psql metrorail-test",
-    "psql:development": "cat db/models/trains.sql db/models/stations.sql db/models/passengers.sql | psql metrorail-development"
+    "psql:development": "cat db/models/trains.sql db/models/stations.sql db/models/passengers.sql | psql metrorail-development",
+    "db:console": "psql metrorail-test"
   },
   "dependencies": {
     "body-parser": "~1.15.2",
@@ -22,6 +23,8 @@
     "pg-promise": "^5.6.3"
   },
   "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-es2015": "^6.22.0",
     "chai": "^3.5.0",
     "eslint": "^3.17.0",
     "mocha": "^3.2.0"
