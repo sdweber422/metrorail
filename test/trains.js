@@ -5,6 +5,7 @@ const expect = chai.expect
 const db = require( '../db/config' ).db
 const Train = require( '../db/commands/train' )
 
+
 describe('Train', function() {
 
   let firstTrain, secondTrain
@@ -22,14 +23,24 @@ describe('Train', function() {
     expect( Train ).to.be.a( 'function' )
   })
 
-  describe('#getTrainNumber', function() {
-    context('when given the station number 1', function() {
-      it('should return the first train in the train table', function() {
+  describe('.getTrainNumber', function() {
+    context('when given the station number "Downtown"', function() {
+      it('should return train number 1', function() {
 
-        return Train.getTrainNumber( 1 )
+        return Train.getTrainNumber( "Downtown" )
         .then( train => {
-          console.log( 'this is the empty array', train )
-          expect( train ).to.eql( 41 )
+          expect( train ).to.eql( 1 )
+        })
+      })
+    })
+  })
+
+  describe('.getNextStation', function() {
+    context('when given station "Downtown"', function() {
+      it('should return "Elm Street"', function() {
+        return Train.getNextStation( "Downtown" )
+        .then( result => {
+          expect( result.station_name ).to.eql( "Elm Street" ) 
         })
       })
     })
