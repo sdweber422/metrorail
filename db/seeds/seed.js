@@ -13,28 +13,28 @@ seedCommands.insertIntoPassengers(
       origin: 1,
       destination: 5,
       train_id: 2,
-      stop_id: null
+      station_id: null
     },
     {
       name: "Jenny Bond",
       origin: 7,
       destination: null,
       train_id: null,
-      stop_id: 7
+      station_id: 7
     },
     {
       name: "Chris Webber",
       origin: 2,
       destination: 4,
       train_id: null,
-      stop_id: 2
+      station_id: 2
     },
     {
       name: "Jane Doe",
       origin: 12,
       destination: 5,
       train_id: 1,
-      stop_id: null
+      station_id: null
     }
 
 )
