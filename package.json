@@ -7,7 +7,7 @@
     "test": "NODE_ENV='test' && mocha --recursive",
     "test:watch": "NODE_ENV='test' && mocha --recursive -w",
     "db:create": "createdb metrorail-development && createdb metrorail-test",
-    "db:migrate": "npm run psql:test && npm run psql:development && rm psql",
+    "db:migrate": "npm run psql:test && npm run psql:development",
     "db:seed": "node db/seeds/seed.js",
     "db:drop": "dropdb metrorail-test && dropdb metrorail-development",
     "db:reset": "npm run db:drop && npm run db:create && npm run db:migrate",
