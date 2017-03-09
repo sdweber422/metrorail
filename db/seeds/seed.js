@@ -115,6 +115,3 @@ seedCommands.insertIntoPassengers(
     station_name: null
   }
 )
-
-
-pgp.end()

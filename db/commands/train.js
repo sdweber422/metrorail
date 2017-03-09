@@ -74,6 +74,3 @@ class Train {
 }
 
 module.exports = Train
-
-let train = new Train( 999 )
-console.log( 'train', train )

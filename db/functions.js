@@ -10,6 +10,4 @@ const getNextStation = function(current_station){
     .then( result => result )
 }
 
-pgp.end()
-
 module.exports = { getNextStation }

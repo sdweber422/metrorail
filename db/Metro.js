@@ -6,16 +6,19 @@ const pgp = require( './config' ).pgp
 
 class Metro {
   constructor() {
+    this.trains = {}
     this.loadTrains()
+    this.stations = {}
     this.loadStations()
+    this.passengers = {}
     this.loadPassengers()
   }
 
   loadTrains() {
     return db.any(`SELECT * FROM trains`)
-    .then(results =>
+    .then(results => {
       results.forEach( result =>
-        this[result.train_number] = new Train(
+        this.trains[result.train_number] = new Train(
           result.train_number,
           result.current_station,
           result.next_station,
@@ -23,26 +26,28 @@ class Metro {
           result.train_passengers
         )
       )
-    )
+      console.log( 'this.trains', this.trains )
+    })
   }
 
   loadStations() {
     return db.any(`SELECT * FROM stations`)
-    .then(results =>
+    .then(results => {
       results.forEach( result =>
-        this[result.name] = new Station(
+        this.stations[result.station_name] = new Station(
           result.station_name,
           result.station_number
         )
       )
-    )
+      console.log( 'this.stations', this.stations )
+    })
   }
 
   loadPassengers() {
     return db.any(`SELECT * FROM passengers`)
-    .then( results =>
+    .then( results => {
       results.forEach( result =>
-        this[result.id] = new Passenger(
+        this.passengers[result.id] = new Passenger(
           result.id,
           result.passenger_name,
           result.origin,
@@ -51,7 +56,8 @@ class Metro {
           result.station_name
         )
       )
-    )
+      console.log( 'this.passengers', this.passengers )
+    })
   }
 }
 
