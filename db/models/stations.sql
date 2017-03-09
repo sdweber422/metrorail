@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS stations;
 CREATE TABLE IF NOT EXISTS stations (
-  id SERIAL PRIMARY KEY,
-  location VARCHAR(32)
+  station_number INTEGER,
+  station_name VARCHAR(32) PRIMARY KEY
 );

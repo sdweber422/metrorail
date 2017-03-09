@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS trains;
 CREATE TABLE IF NOT EXISTS trains (
-  id SERIAL PRIMARY KEY,
-  capacity INTEGER DEFAULT 52,
-  passengers INTEGER DEFAULT 0,
-  current_location INTEGER DEFAULT 1,
-  next_stop INTEGER
+  train_number INTEGER PRIMARY KEY,
+  train_capacity INTEGER DEFAULT 52,
+  train_passengers INTEGER DEFAULT 0,
+  current_station VARCHAR(32),
+  next_station VARCHAR(32)
 );
