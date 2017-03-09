@@ -2,7 +2,6 @@ const Train = require('./commands/train')
 const Station = require('./commands/station')
 const Passenger = require('./commands/passenger')
 const db = require( './config' ).db
-const pgp = require( './config' ).pgp
 
 class Metro {
   constructor() {
@@ -16,7 +15,7 @@ class Metro {
 
   loadTrains() {
     return db.any(`SELECT * FROM trains`)
-    .then(results => {
+    .then(results =>
       results.forEach( result =>
         this.trains[result.train_number] = new Train(
           result.train_number,
@@ -26,26 +25,24 @@ class Metro {
           result.train_passengers
         )
       )
-      console.log( 'this.trains', this.trains )
-    })
+    )
   }
 
   loadStations() {
     return db.any(`SELECT * FROM stations`)
-    .then(results => {
+    .then(results =>
       results.forEach( result =>
         this.stations[result.station_name] = new Station(
           result.station_name,
           result.station_number
         )
       )
-      console.log( 'this.stations', this.stations )
-    })
+    )
   }
 
   loadPassengers() {
     return db.any(`SELECT * FROM passengers`)
-    .then( results => {
+    .then( results =>
       results.forEach( result =>
         this.passengers[result.id] = new Passenger(
           result.id,
@@ -56,12 +53,8 @@ class Metro {
           result.station_name
         )
       )
-      console.log( 'this.passengers', this.passengers )
-    })
+    )
   }
 }
 
 module.exports = { Metro }
-
-let metro = new Metro()
-console.log( 'metro', metro )
