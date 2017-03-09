@@ -1,28 +1,26 @@
-
 const db = require( '../config' ).db
 const functions = require( '../functions')
 
 class Train {
 
-  constructor ( train_number, current_station, train_capacity, train_passengers ) {
-    this.train_number = train_number
-    this.current_station = current_station || "Downtown"
-    this.next_station = Train.getNextStation( this.current_station )
-    this.train_capacity = train_capacity || 52
-    this.train_passengers = train_passengers || 0
-    this.save()
+  constructor ( trainNumber, currentStation, nextStation, capacity, numberOfPassengers ) {
+    this.trainNumber = trainNumber
+    this.currentStation = currentStation || 'Downtown'
+    this.nextStation = nextStation
+    this.capacity = capacity || 52
+    this.numberOfPassengers = numberOfPassengers || 0
   }
 
-  static getTrainNumber( current_station ) {
-    return db.any( `SELECT * FROM trains WHERE current_station = $1`, current_station )
+  static getTrainNumber( currentStation ) {
+    return db.any( `SELECT * FROM trains WHERE current_station = $1`, currentStation )
     .then( train => {
-      console.log( "TRAIN ",train )
-      return train[0].train_number
+      return train.map( result => result.train_number )
     })
+    .catch( err => err )
   }
 
-  static getNextStation( current_station ) {
-    return functions.getNextStation( current_station )
+  static getNextStation( currentStation ) {
+    return functions.getNextStation( currentStation )
     .then( result => result )
   }
 
@@ -32,15 +30,50 @@ class Train {
       ( train_number, train_capacity, train_passengers, current_station, next_station )
       VALUES ( $1, $2, $3, $4, $5 ) RETURNING *`,
       [
-        this.train_number,
-        this.train_capacity,
-        this.train_passengers,
-        this.current_station,
-        this.next_station
+        this.trainNumber,
+        this.capacity,
+        this.numberOfPassengers,
+        this.currentStation,
+        this.nextStation
       ]
     )
   }
 
+  getCapacity(){
+    return this.capacity
+  }
+
+  getPassengers(){
+    return this.numberOfPassengers
+  }
+
+  isFull(){
+    return this.numberOfPassengers >= this.capacity
+  }
+
+  getCurrentStation(){
+    return this.currentStation
+  }
+
+  static getNextArrivingAtStation( station ){
+    return metro[station].getNextArrivingAtStation()
+  }
+
+
+  // moveToNextStation
+  // offboard
+  // onboard
+  // find
+  create(){
+    new Train
+    this.save()
+    metro.load()
+  }
+  // delete
+  // update
 }
 
 module.exports = Train
+
+let train = new Train( 999 )
+console.log( 'train', train )
