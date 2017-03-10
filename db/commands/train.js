@@ -168,32 +168,3 @@ class Train {
 }
 
 module.exports = Train
-// 
-// let newTrain = new Train({
-//   trainNumber: 487838393,
-//   currentStation: 'Annex',
-//   nextStation: '10th Ave',
-//   capacity: 34,
-//   numberOfPassengers: 1
-// })
-//
-// newTrain.save().then( () => newTrain.moveToNextStation() ).then( () => newTrain.moveToNextStation() ).then( result => {
-//   console.log( 'result', result )
-//   console.log( 'newTrain', newTrain )
-// })
-
-// await newTrain.save()
-// await newTrain.moveToNextStation()
-// await newTrain.update()
-
-// newTrain.moveToNextStation()
-
-// let thisTrain = Train.find( 12 )
-// thisTrain.then( thisTrain => {
-//   console.log( 'thisTrain', thisTrain )
-//   return thisTrain.moveToNextStation()
-// })
-// .then( thisTrain => {
-//   console.log( 'thisTrain', thisTrain )
-//
-// })
