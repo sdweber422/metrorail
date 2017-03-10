@@ -89,23 +89,38 @@ class Train {
     return Train.getNextStation(this.nextStation).then( result => {
       this.nextStation = result
     })
-    .then( _ => this )
+    .then( () => this )
   }
 
   offboard() {
-    db.any(`SELECT * FROM passengers WHERE train_number = $1 AND destination = $2`, [ this.trainNumber, this.currentStation] )
+    let getOffboardingPassengers =
+      `SELECT * FROM passengers
+        WHERE train_number = $1
+          AND destination = $2`
+    db.any( getOffboardingPassengers, [ this.trainNumber, this.currentStation] )
     .then( passengers => {
-      console.log( 'passengers', passengers )
       this.numberOfPassengers -= passengers.length
-      passengers.forEach( passenger => db.none(`DELETE from passengers WHERE id = $1`, passenger.id ) )
+      let updatePassengerTable =
+        `UPDATE passengers
+          SET ( train_number, station_name, origin, destination ) =
+            ( null, $1, $1, null ) WHERE id = $2`
+      passengers.forEach( passenger => db.none( updatePassengerTable, [ this.currentStation, passenger.id ] ) )
     })
   }
 
   onboard() {
-    db.any(`SELECT * FROM passengers WHERE station_name = $1 AND destination IS NOT NULL`)
+    let getOnboardingPassengers =
+      `SELECT * FROM passengers
+        WHERE station_name = $1
+          AND destination IS NOT NULL`
+    db.any( getOnboardingPassengers, this.currentStation )
     .then( passengers => {
       this.numberOfPassengers += passengers.length
-      passengers.forEach( passenger => db.one( `UPDATE passengers SET ( train_number, station_name ) = ( $1, null )`, this.trainNumber ) )
+      let updatePassengerTable =
+        `UPDATE passengers
+          SET ( train_number, station_name ) =
+           ( $1, null ) WHERE id = $2`
+      passengers.forEach( passenger => db.none( updatePassengerTable, [ this.trainNumber, passenger.id ] ) )
     })
   }
 
@@ -136,27 +151,49 @@ class Train {
     return db.none( `DELETE from trains WHERE train_number = $1`, this.trainNumber )
   }
 
-  // update
+  update(){
+    return db.none(
+      `UPDATE trains SET
+      ( train_capacity, train_passengers, current_station, next_station ) =
+      ( $2, $3, $4, $5 ) WHERE train_number = $1`,
+      [
+        this.trainNumber,
+        this.capacity,
+        this.numberOfPassengers,
+        this.currentStation,
+        this.nextStation
+      ]
+    )
+  }
 }
 
 module.exports = Train
+// 
+// let newTrain = new Train({
+//   trainNumber: 487838393,
+//   currentStation: 'Annex',
+//   nextStation: '10th Ave',
+//   capacity: 34,
+//   numberOfPassengers: 1
+// })
+//
+// newTrain.save().then( () => newTrain.moveToNextStation() ).then( () => newTrain.moveToNextStation() ).then( result => {
+//   console.log( 'result', result )
+//   console.log( 'newTrain', newTrain )
+// })
 
-let newTrain = new Train({
-  trainNumber: 2,
-  currentStation: 'Annex',
-  nextStation: '10th Ave',
-  capacity: 34,
-  numberOfPassengers: 1
-})
-// console.log( 'newTrain', newTrain )
+// await newTrain.save()
+// await newTrain.moveToNextStation()
+// await newTrain.update()
+
 // newTrain.moveToNextStation()
-// newTrain.offboard()
-let thisTrain = Train.find( 12 )
-thisTrain.then( thisTrain => {
-  console.log( 'thisTrain', thisTrain )
-  return thisTrain.moveToNextStation()
-})
-.then( thisTrain => {
-  console.log( 'thisTrain', thisTrain )
 
-})
+// let thisTrain = Train.find( 12 )
+// thisTrain.then( thisTrain => {
+//   console.log( 'thisTrain', thisTrain )
+//   return thisTrain.moveToNextStation()
+// })
+// .then( thisTrain => {
+//   console.log( 'thisTrain', thisTrain )
+//
+// })

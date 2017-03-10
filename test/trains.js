@@ -1,22 +1,25 @@
 
 const chai = require( 'chai' )
+const chaiAsPromised = require( 'chai-as-promised' )
 const expect = chai.expect
+const assert = chai.assert
 const db = require( '../db/config' ).db
 const Train = require( '../db/commands/train' )
-const Metro = require( '../db/Metro' )
+
+chai.use( chaiAsPromised )
 
 describe('Train', function() {
   let firstTrain, secondTrain
 
-  // beforeEach( function() {
-  //   return Promise.all([
-  //     db.query( 'TRUNCATE trains' ),
-  //     firstTrain = new Train( 1 ),
-  //     secondTrain = new Train( 2 ),
-  //     firstTrain.save(),
-  //     secondTrain.save()
-  //   ])
-  // })
+  beforeEach( function() {
+    return Promise.all([
+      db.query( 'TRUNCATE trains' ),
+      firstTrain = new Train( { trainNumber: 1, currentStation: 'Downtown', nextStation: 'Elm Street' } ),
+      secondTrain = new Train( { trainNumber: 2, currentStation: 'Annex', nextStation: '10th Ave' } )
+    ])
+    .then( () => firstTrain.save() )
+    .then( () => secondTrain.save() )
+  })
 
   it('should be a function', function() {
     expect( Train ).to.be.a( 'function' )
@@ -25,11 +28,7 @@ describe('Train', function() {
   describe('.getTrainNumber', function() {
     context('when given the station number "Downtown"', function() {
       it('should return train number 1', function() {
-        return Train.getTrainNumber( 'Downtown' )
-        .then( trainData => {
-          expect( trainData ).to.include( 1 )
-          expect( trainData ).to.include( 2 )
-        })
+        return expect( Train.getTrainNumber( 'Downtown' ) ).to.eventually.eql( 1 )
       })
     })
     context('when given a station where no train exists', function() {
