@@ -4,6 +4,8 @@ const Passenger = require('./commands/passenger')
 const db = require( './config' ).db
 
 class Metro {
+
+
   constructor() {
     this.trains = {}
     this.loadTrains()
@@ -12,6 +14,8 @@ class Metro {
     this.passengers = {}
     this.loadPassengers()
   }
+
+  // Create functions to add or delete objects from each sub-class object
 
   loadTrains() {
     return db.any(`SELECT * FROM trains`)
@@ -55,6 +59,25 @@ class Metro {
       )
     )
   }
+
+  loadAll(){
+    this.loadPassengers()
+    this.loadTrains()
+    this.loadStations()
+  }
+
+  createTrain( trainData ) {
+    return Train.create( trainData )
+    .then( trainInstance => {
+      this.trains[ trainData.trainNumber ] = trainInstance
+    })
+  }
+
+  portal( callback, data ){
+    callback( data )
+  }
 }
 
-module.exports = { Metro }
+module.exports = Metro
+
+global.metro = new Metro()

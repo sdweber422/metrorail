@@ -1,4 +1,5 @@
 const db = require( '../config' ).db
+const metro = require( '../index' )
 
 class Station {
 
@@ -58,7 +59,7 @@ class Station {
   delete() {
 
   }
-  
+
 }
 
 module.exports = Station

@@ -1,22 +1,26 @@
 const db = require( '../config' ).db
 const functions = require( '../functions')
+const metro = require( '../index' )
 
 class Train {
 
   constructor ( trainNumber, currentStation, nextStation, capacity, numberOfPassengers ) {
     this.trainNumber = trainNumber
     this.currentStation = currentStation || 'Downtown'
-    this.nextStation = nextStation
+    this.nextStation = functions.getNextStation('Downtown')
     this.capacity = capacity || 52
     this.numberOfPassengers = numberOfPassengers || 0
   }
+
 
   static getTrainNumber( currentStation ) {
     return db.any( `SELECT * FROM trains WHERE current_station = $1`, currentStation )
     .then( train => {
       return train.map( result => result.train_number )
     })
-    .catch( err => err )
+    .catch( err => {
+      throw err
+    })
   }
 
   static getNextStation( currentStation ) {
@@ -64,11 +68,15 @@ class Train {
   // offboard
   // onboard
   // find
-  create(){
-    new Train
-    this.save()
-    metro.load()
+
+  static create( metro, trainData ) {
+    let newTrain = new Train( trainData.trainNumber )
+    metro.trains[ trainData.trainNumber ] = newTrain
+    metro.trains[ trainData.trainNumber ].save()
+    return metro
+
   }
+
   // delete
   // update
 }

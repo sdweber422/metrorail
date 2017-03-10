@@ -3,20 +3,9 @@ const chai = require( 'chai' )
 const expect = chai.expect
 const db = require( '../db/config' ).db
 const Train = require( '../db/commands/train' )
-
+const Metro = require( '../db/Metro' )
 
 describe('Train', function() {
-
-  let firstTrain, secondTrain
-
-
-  beforeEach( function () {
-    return Promise.all([
-      db.query("TRUNCATE trains"),
-      firstTrain = new Train( 1 ),
-      secondTrain = new Train( 2, "Downtown" )
-    ])
-  })
 
   it('should be a function', function() {
     expect( Train ).to.be.a( 'function' )
@@ -27,7 +16,7 @@ describe('Train', function() {
       it('should return train number 1', function() {
         return Train.getTrainNumber( 'Downtown' )
         .then( trainData => {
-          expect( trainData ).to.contain( 1 && 2 )
+          expect( trainData ).to.include( 1, 2 )
         })
       })
     })
@@ -39,6 +28,14 @@ describe('Train', function() {
         })
       })
     })
+    // context('when not given a parameter', function() {
+    //   it('should throw an error', function() {
+    //     return Train.getTrainNumber()
+    //     .then( trainData => {
+    //       expect( trainData).to.eql( 'error: there is no parameter $1' )
+    //     })
+    //   })
+    // })
   })
 
   describe('.getNextStation', function() {
@@ -49,6 +46,19 @@ describe('Train', function() {
           expect( result.station_name ).to.eql( "Elm Street" )
         })
       })
+    })
+  })
+
+  describe('.create', function() {
+    context('when called with 11', function() {
+      it('should create a train object', function() {
+        metro = Train.create( metro, { trainNumber: 11 } )
+        console.log( 'metro', metro )
+        expect( metro.trains[11].currentStation ).to.eql( "Downtown" )
+      })
+      // it('should add the train to the database', function() {
+      //
+      // })
     })
   })
 })
