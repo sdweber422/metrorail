@@ -1,6 +1,5 @@
 const db = require( '../config' ).db
 const functions = require( '../functions')
-const metro = require( '../index' )
 
 class Train {
 
@@ -23,7 +22,7 @@ class Train {
     })
   }
 
-  static getNextStation( currentStation ) {
+  getNextStation( currentStation ) {
     return functions.getNextStation( currentStation )
     .then( result => result )
   }
@@ -69,12 +68,8 @@ class Train {
   // onboard
   // find
 
-  static create( metro, trainData ) {
-    let newTrain = new Train( trainData.trainNumber )
-    metro.trains[ trainData.trainNumber ] = newTrain
-    metro.trains[ trainData.trainNumber ].save()
-    return metro
-
+  static create( trainData ) {
+    return new Train( trainData )
   }
 
   // delete
