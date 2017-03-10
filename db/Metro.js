@@ -5,7 +5,6 @@ const db = require( './config' ).db
 
 class Metro {
 
-
   constructor() {
     this.trains = {}
     this.loadTrains()
