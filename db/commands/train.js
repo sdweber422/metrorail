@@ -127,7 +127,7 @@ class Train {
   static find( trainNumber ) {
     return db.one( `SELECT * FROM trains WHERE train_number = $1`, trainNumber )
     .then( train => {
-      console.log( 'train.train_number', train.train_number )
+     train.train_number )
       return new Train({
       trainNumber: train.train_number,
       currentStation: train.current_station,

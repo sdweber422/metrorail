@@ -1,4 +1,5 @@
 const db = require( '../config' ).db
+const functions = require( '../functions')
 
 class Station {
 
@@ -45,7 +46,6 @@ class Station {
           WHERE station_name = $1`
       return db.one( getStationId, stationName )
       .then( results => {
-        console.log( 'results', results )
         let stationNumber = results.station_number
         let count = results.count
         let previousStationNumber
@@ -61,11 +61,11 @@ class Station {
             WHERE station_number = $1`
         return db.one( getPrevious, previousStationNumber )
       })
-      .then( station => station )
+      .then( station => station.station_name )
   }
 
-  getNextStation() {
-
+  static getNextStation( stationName ) {
+    return functions.getNextStation( stationName )
   }
 
   getNextArrivingTrainAtStation() {
@@ -74,12 +74,28 @@ class Station {
 
   static findByID( stationNumber ) {
     let getStation =
-      `SELECT `
+      `SELECT * FROM stations WHERE station_number = $1`
+    return db.one( getStation, stationNumber )
+    .then( station => {
+      return new Station({
+        stationNumber: station.station_number,
+        stationName: station.station_name
+      })
+    })
   }
 
-  static findByLocation() {
-
+  static findByLocation( stationName ) {
+    let getStation =
+      `SELECT * FROM stations WHERE station_name = $1`
+    return db.one( getStation, stationName )
+    .then( station => {
+      return new Station({
+        stationNumber: station.station_number,
+        stationName: station.station_name
+      })
+    })
   }
+
 // Check for station number and do stuff
   static create( stationData ) {
     return new Station( stationData )
@@ -121,7 +137,10 @@ Station.getWaitingPassengers( "Colosseum" ).then( result => console.log( 'result
 Station.getStationID( "Elm Street" ).then( stationId => console.log( 'stationId', stationId ))
 Station.getStationLocation( 5 ).then( location => console.log( 'location', location ))
 Station.getTicketedPassengers( "Elm Street" ).then( ticketed => console.log( 'ticketed', ticketed ))
-Station.getPreviousStation( "Downtown" ).then( previous => console.log( 'previous', previous ))
+Station.getPreviousStation( "Museum Isle" ).then( previous => console.log( 'previous', previous ))
+Station.getNextStation( "Museum Isle" ).then( next => console.log( 'next', next ))
+Station.findByID( 2 ).then( stationById => console.log( 'stationById', stationById ))
+Station.findByLocation( "Elm Street" ).then( byLocation => console.log( 'byLocation', byLocation ))
 // let newStation = Station.create( { stationNumber: 13, stationName: "Bayview"} )
 // newStation.save().then( saveResults => console.log( 'saveResults', saveResults ))
 // newStation.update()
