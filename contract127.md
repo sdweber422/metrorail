@@ -1,10 +1,12 @@
-Description
+##Description
 
 Build an HTTP API for the data model/store from the MetroRail: Data Modeling & Database Design goal. You need a working implementation of that goal before you can do this one.
 
 When complete, you’ll have a web API for interacting with the fictional transit system. You’ll be able to send HTTP requests, with a username and token provided for authentication, and receive a JSON response.
 
+```
 $ curl -u $USERNAME:$TOKEN -X GET http://localhost:4000/api/trains/
+
 {
   "status": "success",
   "data": [
@@ -27,7 +29,9 @@ $ curl -u $USERNAME:$TOKEN -X GET http://localhost:4000/api/trains/
     }
   ]
 }
-Context
+```
+
+##Context
 
 Whenever you write code that may be used by someone besides you (which, hopefully, is most of the time), it is important to pay careful attention to the design of your code’s interface.
 
