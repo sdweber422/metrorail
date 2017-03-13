@@ -39,26 +39,6 @@ describe('Train', function() {
         })
       })
     })
-    // context('when not given a parameter', function() {
-    //   it('should throw an error', function() {
-    //     return Train.getTrainNumber()
-    //     .then( trainData => {
-    //       expect( trainData).to.eql( 'error: there is no parameter $1' )
-    //     })
-    //   })
-    // })
-  })
-
-  // describe('.getNextStation', function() {
-  //   context('when given station "Downtown"', function() {
-  //     it('should return "Elm Street"', function() {
-  //       return Tra in.getNextStation( 'Downtown' )
-  //       .then( result => {
-  //         expect( result.station_name ).to.eql( "Elm Street" )
-  //       })
-  //     })
-  //   })
-  // })
 
   describe('.create', function() {
     context('when called with 11', function() {

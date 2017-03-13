@@ -96,7 +96,6 @@ class Station {
     })
   }
 
-// Check for station number and do stuff
   static create( stationData ) {
     return new Station( stationData )
   }
@@ -126,22 +125,7 @@ class Station {
       this.stationNumber = null
       this.stationName = null
     })
-
   }
-
 }
 
 module.exports = Station
-
-Station.getWaitingPassengers( "Colosseum" ).then( result => console.log( 'result', result ))
-Station.getStationID( "Elm Street" ).then( stationId => console.log( 'stationId', stationId ))
-Station.getStationLocation( 5 ).then( location => console.log( 'location', location ))
-Station.getTicketedPassengers( "Elm Street" ).then( ticketed => console.log( 'ticketed', ticketed ))
-Station.getPreviousStation( "Museum Isle" ).then( previous => console.log( 'previous', previous ))
-Station.getNextStation( "Museum Isle" ).then( next => console.log( 'next', next ))
-Station.findByID( 2 ).then( stationById => console.log( 'stationById', stationById ))
-Station.findByLocation( "Elm Street" ).then( byLocation => console.log( 'byLocation', byLocation ))
-// let newStation = Station.create( { stationNumber: 13, stationName: "Bayview"} )
-// newStation.save().then( saveResults => console.log( 'saveResults', saveResults ))
-// newStation.update()
-// newStation.delete().then( ()=> console.log( 'newStation', newStation ))
