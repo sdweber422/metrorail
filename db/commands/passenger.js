@@ -45,13 +45,17 @@ class Passenger {
   }
 
   useTicket() {
-    return db.one(`SELECT * FROM trains WHERE current_station = $1`, this.stationName)
-    .then( train => {
-      this.trainNumber = train.train_number
-      this.stationName = null
-      this.update( 'trainNumber', this.trainNumber )
-      this.update( 'stationName', this.stationName)
+
+    return db.any(`SELECT * FROM trains WHERE current_station = $1`, this.stationName)
+    .then( trains => {
+      if( trains.length >= 1 ){
+        this.trainNumber = trains[0].train_number
+        this.stationName = null
+        this.update()
+      }
+      else{ throw new Error( 'No trains at passengers station' )}
     })
+    .catch( err => {throw err})
   }
 
   getCurrentTrain() {
@@ -106,15 +110,11 @@ class Passenger {
 
   }
 
-  update( field, data ) {
+  update() {
     return db.none(
-    `UPDATE passengers SET $1, CASE
-      WHEN $1 = 'passengerName' THEN passenger_name
-      WHEN $1 = 'destination' THEN destination
-      WHEN $1 = 'trainNumber' THEN train_number
-      WHEN $1 = 'stationName' THEN station_name
-      END
-       = $2 WHERE id = $3`, [ field, data, this.id ] )
+    `UPDATE passengers SET (passenger_name, origin, destination, train_number, station_name)
+    = ( $2, $3, $4, $5, $6 ) WHERE id = $1`,
+    [ this.id, this.passengerName, this.origin, this.destination, this.trainNumber, this.stationName ] )
   }
 
   delete() {
