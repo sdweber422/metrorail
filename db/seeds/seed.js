@@ -108,13 +108,10 @@ seedCommands.insertIntoPassengers(
     station_name: "Elm Street"
   },
   {
-    passenger_name: "Jan",
+    passenger_name: "Jane Doe",
     origin: "Museum Isle",
     destination: "10th Ave",
     train_number: 1,
     station_name: null
   }
 )
-
-
-pgp.end()
