@@ -127,7 +127,7 @@ class Train {
   static find( trainNumber ) {
     return db.one( `SELECT * FROM trains WHERE train_number = $1`, trainNumber )
     .then( train => {
-      console.log( 'train.train_number', train.train_number )
+     train.train_number )
       return new Train({
       trainNumber: train.train_number,
       currentStation: train.current_station,
@@ -143,12 +143,14 @@ class Train {
   }
 
   delete() {
-    this.trainNumber = null
-    this.currentStation = null
-    this.nextStation = null
-    this.capacity = null
-    this.numberOfPassengers = null
-    return db.none( `DELETE from trains WHERE train_number = $1`, this.trainNumber )
+    return db.none( `DELETE FROM trains WHERE train_number = $1`, this.trainNumber )
+    .then( () => {
+      this.trainNumber = null
+      this.currentStation = null
+      this.nextStation = null
+      this.capacity = null
+      this.numberOfPassengers = null
+    })
   }
 
   update(){
