@@ -51,14 +51,16 @@ Where and why is the code vulnerable to attack or performance stress?
 What tools and/or standards should I use when producing documentation?
 Specifications
 
-Commands
+##Commands
 
 Expose the following commands (and more, if you need) using the scripts property of your package.json.
-
- $ npm run test: run all tests.
+```
+ $ npm run test : run all tests.
  $ npm run start: start a web server for the API (at /api).
  $ npm run docs: generate documentation for the API and/or start a server for rendering the docs (you can use something like http://apidocjs.com/).
-User Stories
+ ```
+ 
+##User Stories
 
 Create models with interfaces to satisfy the following user stories, assuming the “user” in this case is a programmer consuming your web API.
 
