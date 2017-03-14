@@ -4,11 +4,18 @@ const functions = require( '../functions')
 class Train {
 
   constructor ( trainData ) {
-    this.trainNumber =  trainData.trainNumber
-    this.currentStation = trainData.currentStation || 'Downtown'
-    this.nextStation = trainData.nextStation || Train.getNextStation(this.currentStation)
-    this.capacity = trainData.capacity || 52
-    this.numberOfPassengers = trainData.numberOfPassengers || 0
+    const {
+      trainNumber,
+      currentStation,
+      nextStation,
+      capacity,
+      numberOfPassengers
+    } = trainData
+    this.trainNumber =  trainNumber
+    this.currentStation = currentStation || 'Downtown'
+    this.nextStation = nextStation || Train.getNextStation(this.currentStation)
+    this.capacity = capacity || 52
+    this.numberOfPassengers = numberOfPassengers || 0
   }
 
   static getTrainNumber( currentStation ) {
@@ -164,7 +171,9 @@ class Train {
   }
 
   static create( trainData ) {
-    return new Train( trainData )
+    let newTrain = new Train( trainData )
+    return newTrain.save()
+    .then( () => new Train( trainData ) )
   }
 
   delete() {
