@@ -21,56 +21,19 @@ class Passenger {
     this.stationName = stationName || this.origin
   }
 
-  static getPassengerID( name ) {
-    return db.one(`SELECT * FROM passengers WHERE passenger_name = $1`, name)
+  static create( passengerData ) {
+    let newPassenger = new Passenger( passengerData )
+    return newPassenger.save()
     .then( passenger => {
-      return passenger.id
+      return new Passenger({
+        id: passenger.id,
+        passengerName: passenger.passenger_name,
+        origin: passenger.origin,
+        destination: passenger.destination,
+        trainNumber: passenger.train_number,
+        stationName: passenger.station_name
+      })
     })
-  }
-
-  static getPassengerName( id ) {
-    return db.one(`SELECT * FROM passengers WHERE id = $1`, id)
-    .then( passenger => {
-      return passenger.passenger_name
-    })
-  }
-
-  static getTicket( name ) {
-    return db.one(`SELECT * FROM passengers WHERE passenger_name = $1`, name)
-    .then( passenger => {
-      return {'origin':passenger.origin,'destination':passenger.destination}
-    })
-  }
-
-  setCurrentStation( station ) {
-    this.stationName = station
-    return db.none(`UPDATE passengers SET station_name = $2 WHERE passenger_name = $1`,
-    [ this.passengerName, station ])
-  }
-
-  buyTicket( destination ) {
-    this.destination = destination
-    this.update()
-  }
-
-  useTicket() {
-    Train.findTrainsAtStation( this.stationName )
-    .then( results => {
-      let train = results[0]
-      train.numberOfPassengers++
-      train.update()
-      this.stationName = null
-      this.trainNumber = train.trainNumber
-      this.update()
-    })
-  }
-
-  getCurrentTrain() {
-    return this.trainNumber
-  }
-
-  getCurrentStation() {
-    return this.currentStation
   }
 
   static findByID( id ) {
@@ -101,27 +64,75 @@ class Passenger {
     })
   }
 
+  static getPassengerID( name ) {
+    return db.one(`SELECT * FROM passengers WHERE passenger_name = $1`, name)
+    .then( passenger => {
+      return passenger.id
+    })
+  }
+
+  static getPassengerName( id ) {
+    return db.one(`SELECT * FROM passengers WHERE id = $1`, id)
+    .then( passenger => {
+      return passenger.passenger_name
+    })
+  }
+
+  static getTicket( name ) {
+    return db.one(`SELECT * FROM passengers WHERE passenger_name = $1`, name)
+    .then( passenger => {
+      if( !passenger.destination ){ return 'passenger does not have a ticket'}
+      else{return {'origin':passenger.origin,'destination':passenger.destination}}
+    })
+  }
+
   static getAllAtStation( station ) {
     return db.any(`SELECT * FROM passengers WHERE station_name = $1`, station)
-  }
-
-  getAllOnTrain( trainNumber ) {
-    return db.any(`SELECT * FROM passengers WHERE train_number = $1`, trainNumber)
-  }
-
-  static create( passengerData ) {
-    let newPassenger = new Passenger( passengerData )
-    return newPassenger.save()
-    .then( passenger => {
-      return new Passenger({
-        id: passenger.id,
-        passengerName: passenger.passenger_name,
-        origin: passenger.origin,
-        destination: passenger.destination,
-        trainNumber: passenger.train_number,
-        stationName: passenger.station_name
-      })
+    .then( results => {
+      return Promise.all(results.map( passenger => {
+        return Passenger.findByID( passenger.id )
+      }))
     })
+  }
+
+  static getAllOnTrain( trainNumber ) {
+    return db.any(`SELECT * FROM passengers WHERE train_number = $1`, trainNumber)
+    .then( results => {
+      return Promise.all(results.map( passenger => {
+        return Passenger.findByID( passenger.id )
+      }))
+    })
+  }
+
+  setCurrentStation( station ) {
+    this.stationName = station
+    return db.none(`UPDATE passengers SET station_name = $2 WHERE id = $1`,
+    [ this.id, station ])
+  }
+
+  buyTicket( destination ) {
+    this.destination = destination
+    this.update()
+  }
+
+  useTicket() {
+    Train.findTrainsAtStation( this.stationName )
+    .then( results => {
+      let train = results[0]
+      train.numberOfPassengers++
+      train.update()
+      this.stationName = null
+      this.trainNumber = train.trainNumber
+      this.update()
+    })
+  }
+
+  getCurrentTrain() {
+    return this.trainNumber
+  }
+
+  getCurrentStation() {
+    return this.currentStation
   }
 
   save() {
