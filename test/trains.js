@@ -1,22 +1,18 @@
 
 const chai = require( 'chai' )
-const chaiAsPromised = require( 'chai-as-promised' )
 const expect = chai.expect
 const assert = chai.assert
 const db = require( '../db/config' ).db
 const Train = require( '../db/commands/train' )
 
-chai.use( chaiAsPromised )
 
 describe('Train', function() {
   let firstTrain, secondTrain
 
   beforeEach( function() {
-    return Promise.all([
-      db.query( 'TRUNCATE trains' ),
-      firstTrain = new Train( { trainNumber: 1, currentStation: 'Downtown', nextStation: 'Elm Street' } ),
-      secondTrain = new Train( { trainNumber: 2, currentStation: 'Annex', nextStation: '10th Ave' } )
-    ])
+    firstTrain = new Train( { trainNumber: 1, currentStation: 'Downtown', nextStation: 'Elm Street' } ),
+    secondTrain = new Train( { trainNumber: 2, currentStation: 'Annex', nextStation: '10th Ave' } )
+    return db.query( 'TRUNCATE trains' )
     .then( () => firstTrain.save() )
     .then( () => secondTrain.save() )
   })
@@ -39,6 +35,7 @@ describe('Train', function() {
         })
       })
     })
+  })
 
   describe('.create', function() {
     context('when called with 11', function() {
