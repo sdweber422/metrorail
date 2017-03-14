@@ -1,14 +1,24 @@
 const db = require( '../config' ).db
+const Train = require( './train')
 
 class Passenger {
 
-  constructor( id, passengerName, origin, destination, trainNumber, stationName ) {
+  constructor( passengerData ) {
+    const {
+      id,
+      passengerName,
+      origin,
+      destination,
+      trainNumber,
+      stationName
+    } = passengerData
+
     this.id = id
     this.passengerName = passengerName
-    this.origin = origin
-    this.destination = destination
-    this.trainNumber = trainNumber
-    this.stationName = stationName
+    this.origin = origin || 'Downtown'
+    this.destination = destination || null
+    this.trainNumber = trainNumber || null
+    this.stationName = stationName || this.origin
   }
 
   static getPassengerID( name ) {
@@ -40,74 +50,86 @@ class Passenger {
 
   buyTicket( destination ) {
     this.destination = destination
-    return db.none(`UPDATE passengers SET destination = $2 WHERE passenger_name = $1`,
-      [ this.passengerName, destination ])
+    this.update()
   }
 
   useTicket() {
-
-    return db.any(`SELECT * FROM trains WHERE current_station = $1`, this.stationName)
-    .then( trains => {
-      if( trains.length >= 1 ){
-        this.trainNumber = trains[0].train_number
-        this.stationName = null
-        this.update()
-      }
-      else{ throw new Error( 'No trains at passengers station' )}
+    Train.findTrainsAtStation( this.stationName )
+    .then( results => {
+      let train = results[0]
+      train.numberOfPassengers++
+      train.update()
+      this.stationName = null
+      this.trainNumber = train.trainNumber
+      this.update()
     })
-    .catch( err => {throw err})
   }
 
   getCurrentTrain() {
-
+    return this.trainNumber
   }
 
   getCurrentStation() {
-
+    return this.currentStation
   }
 
   static findByID( id ) {
     return db.one( `SELECT * FROM passengers WHERE id = $1`, id )
     .then( passenger => {
-      return new Passenger(
-        passenger.id,
-        passenger.passenger_name,
-        passenger.origin,
-        passenger.destination,
-        passenger.train_number,
-        passenger.station_name
-      )
+      return new Passenger({
+        id: passenger.id,
+        passengerName: passenger.passenger_name,
+        origin: passenger.origin,
+        destination: passenger.destination,
+        trainNumber: passenger.train_number,
+        stationName: passenger.station_name
+      })
     })
   }
 
   static findByName( name ) {
     return db.one( `SELECT * FROM passengers WHERE passenger_name = $1`, name )
     .then( passenger => {
-      return new Passenger(
-        passenger.id,
-        passenger.passenger_name,
-        passenger.origin,
-        passenger.destination,
-        passenger.train_number,
-        passenger.station_name
-      )
+      return new Passenger({
+        id: passenger.id,
+        passengerName: passenger.passenger_name,
+        origin: passenger.origin,
+        destination: passenger.destination,
+        trainNumber: passenger.train_number,
+        stationName: passenger.station_name
+      })
     })
   }
 
-  static getAllAtStation() {
-
+  static getAllAtStation( station ) {
+    return db.any(`SELECT * FROM passengers WHERE station_name = $1`, station)
   }
 
-  getAllOnTrain() {
-
+  getAllOnTrain( trainNumber ) {
+    return db.any(`SELECT * FROM passengers WHERE train_number = $1`, trainNumber)
   }
 
-  static create() {
-
+  static create( passengerData ) {
+    let newPassenger = new Passenger( passengerData )
+    return newPassenger.save()
+    .then( passenger => {
+      return new Passenger({
+        id: passenger.id,
+        passengerName: passenger.passenger_name,
+        origin: passenger.origin,
+        destination: passenger.destination,
+        trainNumber: passenger.train_number,
+        stationName: passenger.station_name
+      })
+    })
   }
 
   save() {
-
+    return db.one(
+    `INSERT INTO passengers (id, passenger_name, origin, destination, train_number, station_name)
+    VALUES ( DEFAULT, $1, $2, $3, $4, $5) RETURNING *`,
+    [ this.passengerName, this.origin, this.destination, this.trainNumber, this.stationName ])
+    .catch( err => err )
   }
 
   update() {
@@ -118,7 +140,9 @@ class Passenger {
   }
 
   delete() {
-
+    return db.none(
+      `DELETE FROM passengers WHERE id = $1`, this.id
+    )
   }
 
 

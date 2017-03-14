@@ -75,6 +75,7 @@ class Train {
     })
   }
 
+
   static getDistanceFromStation( trainNumber, stationNumber ){
     let distance = stationNumber - trainNumber
     if( distance < 0 ){
@@ -85,11 +86,18 @@ class Train {
 
 
   moveToNextStation() {
-    this.currentStation = this.nextStation
-    return Train.getNextStation(this.nextStation).then( result => {
-      this.nextStation = result
+    Train.findByStation( this.nextStation )
+    .then( result => {
+      if( result ){
+        throw new Error( 'Train number ' + result.trainNumber + ' is still at ' + this.nextStation)
+      }
+      else{
+        this.currentStation = this.nextStation
+        return Train.getNextStation(this.nextStation)
+        .then( result => this.nextStation = result )
+        .then( _ => this.update())
+      }
     })
-    .then( () => this )
   }
 
   offboard() {
@@ -127,14 +135,31 @@ class Train {
   static find( trainNumber ) {
     return db.one( `SELECT * FROM trains WHERE train_number = $1`, trainNumber )
     .then( train => {
-     train.train_number )
       return new Train({
-      trainNumber: train.train_number,
-      currentStation: train.current_station,
-      nextStation: train.next_station,
-      capacity: train.train_capacity,
-      numberOfPassengers: train.train_passengers
+        trainNumber: train.train_number,
+        currentStation: train.current_station,
+        nextStation: train.next_station,
+        capacity: train.train_capacity,
+        numberOfPassengers: train.train_passengers
       })
+    })
+  }
+
+  static findByStation( stationName ){
+    return db.any( `SELECT * FROM trains WHERE current_station = $1`, stationName )
+    .then( train => {
+      if( train.length ){
+        return new Train({
+          trainNumber: train[0].train_number,
+          currentStation: train[0].current_station,
+          nextStation: train[0].next_station,
+          capacity: train[0].train_capacity,
+          numberOfPassengers: train[0].train_passengers
+        })
+      }
+      else{
+        return
+      }
     })
   }
 
@@ -143,14 +168,12 @@ class Train {
   }
 
   delete() {
-    return db.none( `DELETE FROM trains WHERE train_number = $1`, this.trainNumber )
-    .then( () => {
-      this.trainNumber = null
-      this.currentStation = null
-      this.nextStation = null
-      this.capacity = null
-      this.numberOfPassengers = null
-    })
+    this.trainNumber = null
+    this.currentStation = null
+    this.nextStation = null
+    this.capacity = null
+    this.numberOfPassengers = null
+    return db.none( `DELETE from trains WHERE train_number = $1`, this.trainNumber )
   }
 
   update(){
