@@ -1,6 +1,7 @@
 const db = require( '../config' ).db
 const functions = require( '../functions')
 const Train = require( './train' )
+const Passenger = require( './passenger'  )
 
 class Station {
 
@@ -61,6 +62,9 @@ class Station {
         station_name = $1
       `
     return db.any( getPassengersAtStation, stationName )
+    .then( results => {
+      return Promise.all( results.map( passenger => Passenger.findByID( passenger.id ) ) )
+    })
     .catch( err => { throw err } )
   }
 
@@ -77,7 +81,10 @@ class Station {
         destination IS NOT NULL
       `
     return db.any( getPassengersWithTickets, stationName )
-    .catch( err => { throw err } )
+    .then( results => {
+      return Promise.all( results.map( passenger => Passenger.findByID( passenger.id ) ) )
+    })
+    .catch( err => err )
   }
 
   static count() {
@@ -168,7 +175,7 @@ class Station {
         stationName: station[ 0 ].station_name
       })
     })
-    .catch( err => err )
+    .catch( err => { throw err } )
   }
 
   static findByLocation( stationName ) {
@@ -191,6 +198,7 @@ class Station {
         stationName: stationName
       })
     })
+    .catch( err => { throw err } )
   }
 
   static create( stationData ) {
@@ -202,7 +210,16 @@ class Station {
       if ( stationData.stationNumber > count || stationData.stationNumber < 1 ) {
         stationData.stationNumber = parseInt( count ) + 1
       }
-      db.none( `UPDATE stations SET station_number = station_number + 1 WHERE station_number >= $1`, stationData.stationNumber )
+      let updateStations =
+        `
+        UPDATE
+          stations
+        SET
+          station_number = station_number + 1
+        WHERE
+          station_number >= $1
+        `
+      db.none( updateStations, stationData.stationNumber )
     })
     .then( () => Station.save( stationData ) )
     .then( station => {
@@ -211,6 +228,7 @@ class Station {
         stationName: station.station_name
       })
     })
+    .catch( err => { throw err } )
   }
 
   static save( stationData ) {
@@ -231,7 +249,7 @@ class Station {
         stationData.stationName
       ]
     )
-    .catch( err => err )
+    .catch( err => { throw err } )
   }
 
   static update() {
@@ -251,6 +269,7 @@ class Station {
         this.stationName
       ]
     )
+    .catch( err => { throw err } )
   }
 
   delete() {
@@ -270,20 +289,3 @@ class Station {
 }
 
 module.exports = Station
-
-// Station.findByID( 9 )
-// .then( result => {
-//   console.log( 'result', result )
-// })
-// Station.findByLocation( "Colosseum" )
-// .then( result => console.log( 'result', result ))
-// Station.getPreviousStation( 'Elm Street' )
-// .then( prev => console.log( 'prev', prev ))
-// Station.getStationLocation( 5 )
-// .then( statLoc => console.log( 'statLoc', statLoc ))
-// Station.getStationID( "Elm Street" )
-// .then( statID => console.log( 'statID', statID ))
-// Station.getNextStation( 'Colosseum' )
-// .then( next => console.log( 'next', next ))
- Station.create( { stationNumber: 4, stationName: 'DONT STOP HERE' } )
-.then( where => console.log( 'where', where ))
