@@ -4,7 +4,7 @@ const Station = require( '../db/commands/station' )
 const Train = require( '../db/commands/train')
 const Passenger = require( '../db/commands/passenger')
 
-describe.only( 'Station', function() {
+describe( 'Station', function() {
 
   it( 'should be a function', function() {
     expect( Station ).to.be.a( 'function' )
