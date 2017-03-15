@@ -6,7 +6,7 @@ const Train = require( '../db/commands/train' )
 const Passenger = require( '../db/commands/passenger' )
 
 
-describe.only('Passenger', function() {
+describe('Passenger', function() {
 
 
   before( function() {

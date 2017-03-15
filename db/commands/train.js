@@ -81,6 +81,15 @@ class Train {
       })
       return closestTrain
     })
+    .then( train => {
+      return new Train({
+        trainNumber: train.train_number,
+        currentStation: train.current_station,
+        nextStation: train.next_station,
+        capacity: train.train_capacity,
+        numberOfPassenger: train.train_passengers
+      })
+    })
   }
 
 
