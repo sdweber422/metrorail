@@ -12,6 +12,30 @@ describe.only( 'Station', function() {
 
   before( function() {
     return db.query( 'TRUNCATE trains, passengers, stations')
+    .then( () => new Station ( { stationNumber: 1, stationName: 'Downtown' }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 2, stationName: 'Elm Street'}))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 3, stationName: "Forest Gardens" }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 4, stationName: "Annex" }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 5, stationName: "10th Ave" }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 6, stationName: "Waterfront" }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 7, stationName: "Colosseum" }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 8, stationName: "Central Station" }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 9, stationName: "Parkside" }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 10, stationName: "Grand Boulevard" }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 11, stationName: "Monument Valley" }))
+    .then( station => Station.save( station ) )
+    .then( () => new Station ( { stationNumber: 12, stationName: "Museum Isle" }))
+    .then( station => Station.save( station ) )
     .then( () => Promise.all([
       Train.create({
         trainNumber: 1,
@@ -79,18 +103,6 @@ describe.only( 'Station', function() {
         stationName: null
       })
     ]))
-    .then( () => Station.create( { stationNumber: 1, stationName: 'Downtown' }))
-    .then( () => Station.create( { stationNumber: 2, stationName: "Elm Street"}))
-    .then( () => Station.create( { stationNumber: 3, stationName: "Forest Gardens" }))
-    .then( () => Station.create( { stationNumber: 4, stationName: "Annex" }))
-    .then( () => Station.create( { stationNumber: 5, stationName: "10th Ave" }))
-    .then( () => Station.create( { stationNumber: 6, stationName: "Waterfront" }))
-    .then( () => Station.create( { stationNumber: 7, stationName: "Colosseum" }))
-    .then( () => Station.create( { stationNumber: 8, stationName: "Central Station" }))
-    .then( () => Station.create( { stationNumber: 9, stationName: "Parkside" }))
-    .then( () => Station.create( { stationNumber: 10, stationName: "Grand Boulevard" }))
-    .then( () => Station.create( { stationNumber: 11, stationName: "Monument Valley" }))
-    .then( () => Station.create( { stationNumber: 12, stationName: "Museum Isle" }))
   })
 
   describe( '.getStationID', function() {
@@ -450,7 +462,7 @@ describe.only( 'Station', function() {
     })
 
     context( 'when given an object with a station name that already exists in the database', function() {
-      it( 'should throw an error', function() {
+      it( 'should throw \'duplicate key value violates unique constraint "stations_pkey"\' error', function() {
         return Station.create({ stationNumber: 15, stationName: 'Annex' } )
         .catch( err => {
           expect( err ).to.not.be.undefined
@@ -459,7 +471,29 @@ describe.only( 'Station', function() {
         })
       })
     })
+  })
 
+  describe( '.save', function() {
+    context( 'when given a station object with a valid station number and name', function() {
+      it( 'should enter the station into the database', function() {
+        Station.save( { stationNumber: 18, stationName: 'Elmhurst' } )
+        .then( station => {
+          expect( station ).to.not.be.undefined
+          expect( station.station_number ).to.eql( 18 )
+          expect( station.station_name ).to.eql( 'Elmhurst' )
+        })
+      })
+    })
 
+    context( 'when given a station name that already exists in the database', function() {
+      it( 'should throw \'duplicate key value violates unique constraint "stations_pkey"\' error', function() {
+        Station.save( { stationNumber: 19, stationName: 'Elmhurst' } )
+        .catch( err => {
+          expect( err ).to.not.be.undefined
+          expect( err ).to.be.instanceof( Error )
+          expect( err.message ).to.eql( 'duplicate key value violates unique constraint "stations_pkey"' )
+        })
+      })
+    })
   })
 })
