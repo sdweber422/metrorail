@@ -118,19 +118,25 @@ class Train {
   }
 
   offboard() {
-    let getOffboardingPassengers =
-      `SELECT * FROM passengers
-        WHERE train_number = $1
-          AND destination = $2`
-    db.any( getOffboardingPassengers, [ this.trainNumber, this.currentStation] )
+    return db.any( `SELECT id FROM passengers WHERE train_number = $1
+      AND destination = $2`, [ this.trainNumber, this.currentStation ] )
     .then( passengers => {
-      this.numberOfPassengers -= passengers.length
-      let updatePassengerTable =
-        `UPDATE passengers
-          SET ( train_number, station_name, origin, destination ) =
-            ( null, $1, $1, null ) WHERE id = $2`
-      passengers.forEach( passenger => db.none( updatePassengerTable, [ this.currentStation, passenger.id ] ) )
+      return Promise.all(passengers.map( passenger => {
+        return Passenger.findByID( passenger.id )
+      }))
+      .then( passengers => {
+        return passengers.forEach(passenger => {
+          if(passenger.destination === this.currentStation){
+            passenger.stationName = this.currentStation
+            passenger.trainNumber = null
+            passenger.destination = null
+            passenger.update()
+            this.numberOfPassengers--
+          }
+        })
+      })
     })
+    .then(() => this.update())
   }
 
   onboard() {
@@ -174,7 +180,7 @@ class Train {
         })
       }
       else{
-        return
+        return 'No train at that station'
       }
     })
   }
