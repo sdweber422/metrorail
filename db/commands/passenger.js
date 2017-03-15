@@ -15,10 +15,10 @@ class Passenger {
 
     this.id = id
     this.passengerName = passengerName
-    this.origin = origin || 'Downtown'
     this.destination = destination || null
     this.trainNumber = trainNumber || null
-    this.stationName = stationName || this.origin
+    this.stationName = stationName || null
+    this.origin = origin || this.stationName
   }
 
   static create( passengerData ) {
@@ -116,9 +116,9 @@ class Passenger {
   }
 
   useTicket() {
-    Train.findTrainsAtStation( this.stationName )
+    Train.findByStation( this.stationName )
     .then( results => {
-      let train = results[0]
+      let train = results
       train.numberOfPassengers++
       train.update()
       this.stationName = null
