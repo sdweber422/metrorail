@@ -1,5 +1,5 @@
 const db = require( '../config' ).db
-const Train = require( './train')
+
 
 class Passenger {
 
@@ -115,24 +115,12 @@ class Passenger {
     this.update()
   }
 
-  useTicket() {
-    Train.findByStation( this.stationName )
-    .then( results => {
-      let train = results
-      train.numberOfPassengers++
-      train.update()
-      this.stationName = null
-      this.trainNumber = train.trainNumber
-      this.update()
-    })
-  }
-
   getCurrentTrain() {
     return this.trainNumber
   }
 
   getCurrentStation() {
-    return this.currentStation
+    return this.stationName
   }
 
   save() {
