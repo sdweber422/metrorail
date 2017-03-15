@@ -11,6 +11,10 @@ class Station {
     this.stationNumber = stationNumber
   }
 
+  static getAllStations() {
+    return db.any( `SELECT * FROM stations` )
+  }
+
   static getStationID( stationName ) {
     let getStationId =
       `

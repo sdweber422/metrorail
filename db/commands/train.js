@@ -19,6 +19,11 @@ class Train {
     this.numberOfPassengers = numberOfPassengers || 0
   }
 
+  static getAllTrains() {
+    return db.any( `SELECT train_number FROM trains`)
+    .then(trains => Promise.all( trains.map(train => Train.find( train.train_number ) ) ) )
+  }
+
   static getTrainNumber( currentStation ) {
     return db.one( `SELECT * FROM trains WHERE current_station = $1`, currentStation )
     .then( train => {
@@ -165,6 +170,7 @@ class Train {
         numberOfPassengers: train.train_passengers
       })
     })
+    .catch( err => { throw err } )
   }
 
   static findByStation( stationName ){

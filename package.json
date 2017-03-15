@@ -3,13 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "export NODE_ENV='development' && node ./bin/www",
+    "start": "export NODE_ENV='development' && nodemon ./bin/www",
     "test": "export NODE_ENV='test' && mocha --recursive",
     "test:watch": "export NODE_ENV='test' && mocha --recursive -w",
     "lint": "eslint ./",
-    "db:create": "createdb metrorail-development && createdb metrorail-test",
+    "db:create:dev": "export NODE_ENV='development' && createdb metrorail-development",
+    "db:create:test": "createdb metrorail-test",
     "db:migrate": "npm run psql:test && npm run psql:development",
-    "db:seed": "node db/seeds/seed.js",
+    "db:seed:test": "node db/seeds/seed.js",
+    "db:seed:dev": "export NODE_ENV='development' && node db/seeds/seed.js",
     "db:drop": "dropdb metrorail-test && dropdb metrorail-development && osascript -e 'quit app \"POSTICO\"'",
     "db:reset": "npm run db:drop && npm run db:create && npm run db:migrate",
     "psql:test": "cat db/models/trains.sql db/models/stations.sql db/models/passengers.sql | psql metrorail-test",
@@ -21,7 +23,8 @@
     "debug": "~2.2.0",
     "express": "~4.14.0",
     "morgan": "~1.7.0",
-    "pg-promise": "^5.6.3"
+    "pg-promise": "^5.6.3",
+    "pug": "^2.0.0-beta11"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
@@ -29,6 +32,7 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "eslint": "^3.17.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "nodemon": "^1.11.0"
   }
 }

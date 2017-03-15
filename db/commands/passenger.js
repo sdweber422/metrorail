@@ -21,6 +21,10 @@ class Passenger {
     this.origin = origin || this.stationName
   }
 
+  static getAllPassengers() {
+    return db.any( `SELECT * FROM passengers` )
+  }
+
   static create( passengerData ) {
     let newPassenger = new Passenger( passengerData )
     return newPassenger.save()
@@ -96,12 +100,22 @@ class Passenger {
   }
 
   static getAllOnTrain( trainNumber ) {
+    return db.any(`SELECT * FROM trains WHERE train_number = $1`, trainNumber)
+    .then( result => {
+      if( !result.length ){
+        throw new Error(`Train ${trainNumber} does not exist`)
+      }
+    })
     return db.any(`SELECT * FROM passengers WHERE train_number = $1`, trainNumber)
     .then( results => {
+      if( !result.length ){
+        throw new Error(`Train ${trainNumber} does not have any passengers`)
+      }
       return Promise.all(results.map( passenger => {
         return Passenger.findByID( passenger.id )
       }))
     })
+    .catch( err => { throw err } )
   }
 
   setCurrentStation( station ) {
