@@ -1,5 +1,6 @@
 const db = require( '../config' ).db
 const functions = require( '../functions')
+const Passenger = require( './passenger' )
 
 class Train {
 
@@ -124,19 +125,18 @@ class Train {
   }
 
   onboard() {
-    let getOnboardingPassengers =
-      `SELECT * FROM passengers
-        WHERE station_name = $1
-          AND destination IS NOT NULL`
-    db.any( getOnboardingPassengers, this.currentStation )
+    return Passenger.getAllAtStation( this.currentStation )
     .then( passengers => {
-      this.numberOfPassengers += passengers.length
-      let updatePassengerTable =
-        `UPDATE passengers
-          SET ( train_number, station_name ) =
-           ( $1, null ) WHERE id = $2`
-      passengers.forEach( passenger => db.none( updatePassengerTable, [ this.trainNumber, passenger.id ] ) )
+      return passengers.forEach(passenger => {
+        if(passenger.destination !== null){
+          passenger.stationName = null
+          passenger.trainNumber = this.trainNumber
+          passenger.update()
+          this.numberOfPassengers++
+        }
+      })
     })
+    .then(() => this.update())
   }
 
   static find( trainNumber ) {
