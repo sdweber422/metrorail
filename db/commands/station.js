@@ -141,18 +141,13 @@ class Station {
   }
 
   static getNextStation( stationName ) {
-    return functions.getNextStation( stationName ).then( result => {
-      if ( !result ) {
-        throw new Error( 'Station name does not exist' )
-      }
-      return result
-    })
+    return functions.getNextStation( stationName )
     .catch( err => { throw err } )
   }
 
   getNextArrivingTrainAtStation() {
     return Train.getNextArrivingAtStation( this.stationName )
-    .catch( err => err )
+    .catch( err => { throw err } )
   }
 
   static findByID( stationNumber ) {
@@ -210,16 +205,19 @@ class Station {
       if ( stationData.stationNumber > count || stationData.stationNumber < 1 ) {
         stationData.stationNumber = parseInt( count ) + 1
       }
+      return stationData.stationNumber
+    })
+    .then( stationNumber => {
       let updateStations =
-        `
-        UPDATE
-          stations
-        SET
-          station_number = station_number + 1
-        WHERE
-          station_number >= $1
-        `
-      db.none( updateStations, stationData.stationNumber )
+      `
+      UPDATE
+      stations
+      SET
+      station_number = station_number + 1
+      WHERE
+      station_number >= $1
+      `
+      db.none( updateStations, stationNumber )
     })
     .then( () => Station.save( stationData ) )
     .then( station => {
@@ -289,3 +287,6 @@ class Station {
 }
 
 module.exports = Station
+
+  // Station.create( { stationName: 'Bromptonacious', stationNumber: 555 } )
+  // .then( results => console.log( 'results', results ))
