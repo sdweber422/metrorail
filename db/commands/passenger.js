@@ -22,7 +22,7 @@ class Passenger {
   }
 
   static getAllPassengers() {
-    return db.any( `SELECT * FROM passengers` )
+    return db.any( `SELECT * FROM passengers ORDER BY id ASC` )
   }
 
   static create( passengerData ) {
@@ -142,7 +142,7 @@ class Passenger {
     `INSERT INTO passengers (id, passenger_name, origin, destination, train_number, station_name)
     VALUES ( DEFAULT, $1, $2, $3, $4, $5) RETURNING *`,
     [ this.passengerName, this.origin, this.destination, this.trainNumber, this.stationName ])
-    .catch( err => err )
+    .catch( err => { throw new Error('Name is too short') } )
   }
 
   update() {

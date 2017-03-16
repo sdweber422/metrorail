@@ -32,4 +32,22 @@ router.get( '/number/:trainNumber', function( request, response ){
   })
 })
 
+router.get( '/create', function( request, response ){
+  response.header('content-type','text/html')
+  Train.getEmptyStations()
+  .then( emptyStations => {
+    let stationNames = emptyStations.map( station => station.station_name )
+    response.render( 'createTrain',{ stationNames } )
+  })
+})
+
+router.post( '/create', function( request, response ){
+  const { trainNumber, capacity, currentStation } = request.body
+  const trainData = { trainNumber, capacity, currentStation }
+  Train.create(trainData)
+  .then( newTrain => {
+    response.send( JSON.stringify( newTrain, null, 3 ) )
+  })
+})
+
 module.exports = router

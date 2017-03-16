@@ -25,4 +25,17 @@ router.get( '/location/:stationName', function( request, response ){
   })
 })
 
+router.get( '/create', function( request, response ){
+  response.header( 'content-type', 'text/html' )
+  response.render( 'createStation', {} )
+})
+
+router.post( '/create', function( request, response ){
+  const stationData = request.body
+  Station.create( stationData )
+  .then( newStation => {
+    response.send( JSON.stringify( newStation, null, 3 ) )
+  })
+})
+
 module.exports = router

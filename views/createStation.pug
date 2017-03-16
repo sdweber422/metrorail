@@ -1,0 +1,12 @@
+html
+  body
+    block content
+      h1 Create a station for the database
+      form( method='POST', action='/api/stations/create')
+        label Station Name:
+        input( type='text', name='stationName' )
+        <br />
+        <br />
+        label Station Number:
+        input( type='text', name='stationNumber' )
+        button( type='submit' ) Submit

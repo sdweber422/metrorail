@@ -14,9 +14,25 @@ class Train {
     } = trainData
     this.trainNumber =  trainNumber
     this.currentStation = currentStation || 'Downtown'
-    this.nextStation = nextStation || Train.getNextStation(this.currentStation)
+    this.nextStation = nextStation
     this.capacity = capacity || 52
     this.numberOfPassengers = numberOfPassengers || 0
+  }
+
+  static create( trainData ) {
+    let newTrain = new Train( trainData )
+    return Promise.all([Train.getNextStation(newTrain.currentStation),newTrain])
+    .then( result => {
+      result[1].nextStation = result[0]
+      return result[1]
+    })
+    .then( train => train.save() )
+    .then( train => Train.find(trainData.trainNumber))
+  }
+
+
+  static getEmptyStations(){
+    return db.any(`SELECT * FROM stations WHERE station_name NOT IN (SELECT current_station FROM trains)`)
   }
 
   static getAllTrains() {
@@ -37,6 +53,11 @@ class Train {
   static getNextStation( currentStation ) {
     return functions.getNextStation( currentStation )
     .then( result => result )
+  }
+
+  getNextStation() {
+    return functions.getNextStation( this.currentStation )
+    .then( result => this.nextStation = result )
   }
 
   save(){
@@ -191,11 +212,6 @@ class Train {
     })
   }
 
-  static create( trainData ) {
-    let newTrain = new Train( trainData )
-    return newTrain.save()
-    .then( () => new Train( trainData ) )
-  }
 
   delete() {
     this.trainNumber = null
