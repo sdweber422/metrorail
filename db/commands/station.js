@@ -259,23 +259,40 @@ class Station {
     .catch( err => { throw err } )
   }
 
-  static update() {
-    let updateStation =
-      `
-      UPDATE
-        stations
-      SET
-        station_number = $1
-      WHERE
-        station_name = $2
-      `
-    return db.none(
-      updateStation,
-      [
-        this.stationNumber,
-        this.stationName
-      ]
-    )
+  update() {
+    return db.one(`SELECT station_number FROM stations WHERE station_name = $1`, this.stationName)
+    .then( station => station.station_number)
+    .then( oldStationNumber => {
+      let newStationNumber = this.stationNumber
+      console.log( 'oldStationNumber', oldStationNumber )
+      console.log( 'newStationNumber', newStationNumber )
+      if( oldStationNumber > newStationNumber ){
+        db.none(`UPDATE stations SET station_number = station_number + 1 WHERE station_number < $1 AND station_number >= $2`, [oldStationNumber, newStationNumber])
+      }
+      if( oldStationNumber < newStationNumber ){
+        db.none(`UPDATE stations SET station_number = station_number - 1 WHERE station_number > $1 AND station_number <= $2`, [oldStationNumber, newStationNumber])
+      }
+    })
+    .then( ()=> {
+      let updateStation =
+        `
+        UPDATE
+          stations
+        SET
+          station_number = $1
+        WHERE
+          station_name = $2
+        `
+
+      return db.none(
+        updateStation,
+        [
+          this.stationNumber,
+          this.stationName
+        ]
+      )
+    })
+    .then( () => this )
     .catch( err => { throw err } )
   }
 

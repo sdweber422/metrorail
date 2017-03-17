@@ -7,8 +7,8 @@ html
         select( type='text', name='station', onchange='stationToDelete(this.value)' )
           for station in stations
             option( value=`${station.stationName}`) #{station.stationName} : #{station.stationNumber}
-        <br />
-        <br />
+        br
+        br
 
         button( type='submit' ) Submit
 

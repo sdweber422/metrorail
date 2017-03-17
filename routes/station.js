@@ -69,13 +69,11 @@ router.get( '/update/:stationName', function( request, response ){
   ])
   .then( results => {
     let { stationName, stationNumber } = results[0]
-    let stationNames = results[1].map( station => station.stationName )
     let stationNumbers = results[1].map( station => station.stationNumber )
     response.setHeader( 'content-type', 'text/html' )
     response.render( 'updateStation', {
       stationName,
       stationNumber,
-      stationNames,
       stationNumbers
     })
   })
@@ -90,7 +88,6 @@ router.post( '/updated/:stationName', function( request, response ){
   Station.findByLocation( stationName )
   .then( station => {
     let { stationName, stationNumber } = request.body
-    station.stationName = stationName
     station.stationNumber = stationNumber
     return station.update()
   })

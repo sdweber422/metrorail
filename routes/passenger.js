@@ -115,11 +115,13 @@ router.get( '/update/:id', function( request, response ){
   })
 })
 
-router.put( 'updated/:id', function( request, response ) {
+router.put( 'update/:id', function( request, response ) {
   const { id } = request.params
   Passenger.findByID( id )
+  console.log( 'request.body', request.body )
   .then( passenger => {
     let { passengerName, origin, destination, trainNumber, stationName } = request.query
+    console.log( 'request.query', request.query )
     passenger.passengerName = passengerName
     passenger.origin = origin || null
     passenger.destination = destination || null
