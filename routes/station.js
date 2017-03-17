@@ -38,4 +38,18 @@ router.post( '/create', function( request, response ){
   })
 })
 
+router.get( '/delete/:stationName', function( request, response ){
+  const { stationName } = request.params
+  Station.findByLocation( stationName )
+  .then( station => station.delete() )
+  .then( result => {
+    let deletedStation = { status: 'success', action: 'delete', data: result }
+    response.send( JSON.stringify( deletedStation, null, 3 ) )
+  })
+  .catch( err => {
+    console.log( 'Error', err )
+    response.status( 404 ).send( { Error: err.message } )
+  })
+})
+
 module.exports = router

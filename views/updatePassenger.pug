@@ -1,0 +1,37 @@
+html
+  body
+    block content
+      h1 Update a passenger in the database
+      form( method='POST', action=`/api/passengers/updated/${id}`)
+        label Passenger name:
+        input( type='text', name='passengerName', value=passengerName )
+        <br />
+        <br />
+        label Origin:
+        select( type='select', name='origin' )
+          option(selected='selected')= origin
+          for name in stationNames
+            option= name
+        <br />
+        <br />
+        label Destination:
+        select( type='select', name='destination' )
+          option(selected='selected')= destination
+          for name in stationNames
+            option= name
+        <br />
+        <br />
+        label Train Number:
+        select( type='select', name='trainNumber' )
+          option(selected='selected')= trainNumber
+          for number in trainNumbers
+            option= number
+        <br />
+        <br />
+        label Station Name:
+        select( type='select', name='stationName' )
+          option(selected='selected')= stationName
+          for name in stationNames
+            option= name
+
+        button( type='submit' ) Submit

@@ -12,7 +12,7 @@ class Station {
   }
 
   static getAllStations() {
-    return db.any( `SELECT * FROM stations` )
+    return db.any( `SELECT * FROM stations ORDER BY station_number ASC` )
   }
 
   static getStationID( stationName ) {
@@ -284,13 +284,13 @@ class Station {
       `
     return db.none( deleteTrain, this.stationNumber )
     .then( () => {
-      this.stationNumber = null
-      this.stationName = null
+      let newStation = new Station( this )
+      delete this.stationNumber
+      delete this.stationName
+      return newStation
     })
+    .catch( err => { throw err } )
   }
 }
 
 module.exports = Station
-
-  // Station.create( { stationName: 'Bromptonacious', stationNumber: 555 } )
-  // .then( results => console.log( 'results', results ))

@@ -214,12 +214,17 @@ class Train {
 
 
   delete() {
-    this.trainNumber = null
-    this.currentStation = null
-    this.nextStation = null
-    this.capacity = null
-    this.numberOfPassengers = null
     return db.none( `DELETE from trains WHERE train_number = $1`, this.trainNumber )
+    .then( () => {
+      let newTrain = new Train( this )
+      delete this.trainNumber
+      delete this.currentStation
+      delete this.nextStation
+      delete this.capacity
+      delete this.numberOfPassengers
+      return newTrain
+    })
+    .catch( err => { throw err }  )
   }
 
   update(){

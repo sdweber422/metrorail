@@ -8,7 +8,6 @@ const getNextStation = function(current_station){
     return db.one(`SELECT station_name FROM stations WHERE station_number = $1`, nextStationNumber)
   })
   .then( result => {
-    console.log( 'result', result )
     return result.station_name
   })
 }

@@ -50,4 +50,18 @@ router.post( '/create', function( request, response ){
   })
 })
 
+router.get( '/delete/:trainNumber', function( request, response ){
+  const { trainNumber } = request.params
+  Train.find( trainNumber )
+  .then( train => train.delete() )
+  .then( result => {
+    let deletedTrain = { status: 'success', data: result }
+    response.send( JSON.stringify( deletedTrain, null, 3 ) )
+  })
+  .catch( err => {
+    console.log( 'Error', err )
+    response.status( 404 ).send( { Error: err.message } )
+  })
+})
+
 module.exports = router

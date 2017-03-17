@@ -150,12 +150,27 @@ class Passenger {
     `UPDATE passengers SET (passenger_name, origin, destination, train_number, station_name)
     = ( $2, $3, $4, $5, $6 ) WHERE id = $1`,
     [ this.id, this.passengerName, this.origin, this.destination, this.trainNumber, this.stationName ] )
+    .then( () => {
+      return this 
+    })
+    .catch( err => { throw err } )
   }
 
   delete() {
     return db.none(
       `DELETE FROM passengers WHERE id = $1`, this.id
     )
+    .then( () => {
+      let newPassenger = new Passenger( this )
+      delete this.id
+      delete this.passengerName
+      delete this.origin
+      delete this.destination
+      delete this.trainNumber
+      delete this.stationName
+      return newPassenger
+    })
+    .catch( err => { throw err } )
   }
 
 
