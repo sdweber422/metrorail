@@ -51,7 +51,7 @@ router.get( '/station/:stationName', function( request, response ){
 router.get( '/create', function(  request, response ){
   Station.getAllStations()
   .then( allStations => {
-    let stationNames = allStations.map( station=> station.station_name )
+    let stationNames = allStations.map( station=> station.stationName )
     response.header( 'content-type', 'text/html')
     response.render( 'createPassenger', { stationNames: stationNames } )
   })
@@ -93,7 +93,7 @@ router.get( '/update/:id', function( request, response ){
   ])
   .then( results => {
     const { id, passengerName, origin, destination, trainNumber, stationName } = results[0]
-    let stationNames = results[1].map( station => station.station_name )
+    let stationNames = results[1].map( station => station.stationName )
     let trainNumbers = results[2].map( train => train.trainNumber )
     stationNames.push( null )
     trainNumbers.push( null )

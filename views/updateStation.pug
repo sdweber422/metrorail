@@ -1,0 +1,18 @@
+html
+  body
+    block content
+      h1 Update a station in the database
+      form( method='POST', action=`/api/stations/updated/${stationName}`)
+        label Station Name:
+        select( type='text', name='stationName' )
+          option( selected='selected')= stationName
+          for name in stationNames
+            option= name
+        <br />
+        <br />
+        label Station Number:
+        select( type='text', name='stationNumber' )
+          option( selected='selected')
+          for number in stationNumbers
+            option= number
+        button( type='submit' ) Submit

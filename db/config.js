@@ -8,6 +8,4 @@ process.on('unhandledRejection', ( err ) => {
   throw err
 })
 
-
-
 module.exports = { db }

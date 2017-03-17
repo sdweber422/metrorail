@@ -13,6 +13,11 @@ class Station {
 
   static getAllStations() {
     return db.any( `SELECT * FROM stations ORDER BY station_number ASC` )
+    .then( stations =>
+      Promise.all( stations.map( station =>
+        Station.findByLocation( station.station_name ) )
+      )
+    )
   }
 
   static getStationID( stationName ) {
@@ -100,7 +105,7 @@ class Station {
       stations
       `
     return db.one( stationCount )
-    .then( result => result.count )
+    .then( result => +result.count )
   }
 
   static getPreviousStation( stationName ) {
@@ -207,7 +212,7 @@ class Station {
     return Station.count()
     .then( count => {
       if ( stationData.stationNumber > count || stationData.stationNumber < 1 ) {
-        stationData.stationNumber = parseInt( count ) + 1
+        stationData.stationNumber = count + 1
       }
       return stationData.stationNumber
     })
@@ -275,14 +280,25 @@ class Station {
   }
 
   delete() {
-    let deleteTrain =
+    let deleteStation =
       `
       DELETE FROM
         stations
       WHERE
         station_number = $1
       `
-    return db.none( deleteTrain, this.stationNumber )
+
+    return db.none( deleteStation, this.stationNumber )
+    .then( () => db.none(
+      `
+      UPDATE
+        stations
+      SET
+        station_number = station_number - 1
+      WHERE
+        station_number > $1
+      `,
+      this.stationNumber )
     .then( () => {
       let newStation = new Station( this )
       delete this.stationNumber
@@ -290,7 +306,7 @@ class Station {
       return newStation
     })
     .catch( err => { throw err } )
-  }
+  )}
 }
 
 module.exports = Station

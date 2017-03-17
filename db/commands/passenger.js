@@ -23,6 +23,11 @@ class Passenger {
 
   static getAllPassengers() {
     return db.any( `SELECT * FROM passengers ORDER BY id ASC` )
+    .then( passengers => Promise.all(
+      passengers.map( passenger =>
+        Passenger.findByID( passenger.id )
+      )
+    ))
   }
 
   static create( passengerData ) {
@@ -105,10 +110,10 @@ class Passenger {
       if( !result.length ){
         throw new Error(`Train ${trainNumber} does not exist`)
       }
+      return db.any(`SELECT * FROM passengers WHERE train_number = $1`, trainNumber)
     })
-    return db.any(`SELECT * FROM passengers WHERE train_number = $1`, trainNumber)
     .then( results => {
-      if( !result.length ){
+      if( !results.length ){
         throw new Error(`Train ${trainNumber} does not have any passengers`)
       }
       return Promise.all(results.map( passenger => {
@@ -151,7 +156,7 @@ class Passenger {
     = ( $2, $3, $4, $5, $6 ) WHERE id = $1`,
     [ this.id, this.passengerName, this.origin, this.destination, this.trainNumber, this.stationName ] )
     .then( () => {
-      return this 
+      return this
     })
     .catch( err => { throw err } )
   }

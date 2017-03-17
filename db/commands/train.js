@@ -37,7 +37,11 @@ class Train {
 
   static getAllTrains() {
     return db.any( `SELECT train_number FROM trains`)
-    .then(trains => Promise.all( trains.map(train => Train.find( train.train_number ) ) ) )
+    .then(trains => Promise.all(
+      trains.map(train =>
+        Train.find( train.train_number )
+        )
+     ))
   }
 
   static getTrainNumber( currentStation ) {
@@ -240,6 +244,10 @@ class Train {
         this.nextStation
       ]
     )
+    .then( () => {
+      return this
+    })
+    .catch( err => { throw err } )
   }
 }
 

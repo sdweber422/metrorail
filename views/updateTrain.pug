@@ -1,0 +1,27 @@
+html
+  body
+    block content
+      h1 Update a train in the database
+      form( method='POST', action=`/api/trains/updated/${trainNumber}`)
+        label Current Station:
+        select( type='text', name='currentStation' )
+          option( selected='selected')= currentStation
+          for name in stationNames
+            option= name
+        <br />
+        <br />
+        label Next Station:
+        select( type='text', name='nextStation' )
+          option( selected='selected')= nextStation
+          for name in stationNames
+            option= name
+        <br />
+        <br />
+        label Capacity:
+        input( type='text', name='capacity', value=capacity)
+        <br />
+        <br />
+        label Number of Passengers:
+        input( type='text', name='numberOfPassengers', value=numberOfPassengers )
+
+        button( type='submit' ) Submit
