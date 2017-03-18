@@ -83,11 +83,29 @@ router.get( '/update/:stationName', function( request, response ){
   })
 })
 
+router.put( '/update/:stationName', function( request, response ){
+  const { stationName } = request.params
+  Station.findByLocation( stationName )
+  .then( station => {
+    let { stationNumber } = request.body
+    station.stationNumber = stationNumber
+    return station.update()
+  })
+  .then( station => {
+    let updatedStation = { status: 'success', method: 'put', data: station }
+    response.send( JSON.stringify( updatedStation, null, 3 ) )
+  })
+  .catch( err => {
+    console.log( 'Error', err )
+    response.status( 404 ).send( { Error: err.message } )
+  })
+})
+
 router.post( '/updated/:stationName', function( request, response ){
   const { stationName } = request.params
   Station.findByLocation( stationName )
   .then( station => {
-    let { stationName, stationNumber } = request.body
+    let { stationNumber } = request.body
     station.stationNumber = stationNumber
     return station.update()
   })
