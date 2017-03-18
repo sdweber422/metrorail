@@ -1,0 +1,19 @@
+html
+  body
+    block content
+      h1 Create a train for the database
+      form( method='POST', action='/api/trains/create')
+        label Train Number:
+        input( type='text', name='trainNumber' )
+        <br />
+        <br />
+        label Capacity:
+        input( type='text', name='capacity' )
+        <br />
+        <br />
+        label Station:
+        select( type='select', name='currentStation', required='true' )
+          for name in stationNames
+            option= name
+
+        button( type='submit' ) Submit

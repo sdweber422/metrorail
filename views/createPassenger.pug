@@ -1,0 +1,15 @@
+html
+  body
+    block content
+      h1 Create a passenger for the database
+      form( method='POST', action='/api/passengers/create')
+        label Passenger name:
+        input( type='text', name='passengerName' )
+        <br />
+        <br />
+        label Station Name:
+        select( type='select', name='stationName', required='true' )
+          for name in stationNames
+            option= name
+
+        button( type='submit' ) Submit

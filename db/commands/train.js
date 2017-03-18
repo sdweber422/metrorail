@@ -14,14 +14,34 @@ class Train {
     } = trainData
     this.trainNumber =  trainNumber
     this.currentStation = currentStation || 'Downtown'
-    this.nextStation = nextStation || Train.getNextStation(this.currentStation)
+    this.nextStation = nextStation
     this.capacity = capacity || 52
     this.numberOfPassengers = numberOfPassengers || 0
   }
 
+  static create( trainData ) {
+    let newTrain = new Train( trainData )
+    return Promise.all([Train.getNextStation(newTrain.currentStation),newTrain])
+    .then( result => {
+      result[1].nextStation = result[0]
+      return result[1]
+    })
+    .then( train => train.save() )
+    .then( train => Train.find(trainData.trainNumber))
+  }
+
+
+  static getEmptyStations(){
+    return db.any(`SELECT * FROM stations WHERE station_name NOT IN (SELECT current_station FROM trains)`)
+  }
+
   static getAllTrains() {
     return db.any( `SELECT train_number FROM trains`)
-    .then(trains => Promise.all( trains.map(train => Train.find( train.train_number ) ) ) )
+    .then(trains => Promise.all(
+      trains.map(train =>
+        Train.find( train.train_number )
+        )
+     ))
   }
 
   static getTrainNumber( currentStation ) {
@@ -37,6 +57,11 @@ class Train {
   static getNextStation( currentStation ) {
     return functions.getNextStation( currentStation )
     .then( result => result )
+  }
+
+  getNextStation() {
+    return functions.getNextStation( this.currentStation )
+    .then( result => this.nextStation = result )
   }
 
   save(){
@@ -191,19 +216,19 @@ class Train {
     })
   }
 
-  static create( trainData ) {
-    let newTrain = new Train( trainData )
-    return newTrain.save()
-    .then( () => new Train( trainData ) )
-  }
 
   delete() {
-    this.trainNumber = null
-    this.currentStation = null
-    this.nextStation = null
-    this.capacity = null
-    this.numberOfPassengers = null
     return db.none( `DELETE from trains WHERE train_number = $1`, this.trainNumber )
+    .then( () => {
+      let newTrain = new Train( this )
+      delete this.trainNumber
+      delete this.currentStation
+      delete this.nextStation
+      delete this.capacity
+      delete this.numberOfPassengers
+      return newTrain
+    })
+    .catch( err => { throw err }  )
   }
 
   update(){
@@ -219,6 +244,10 @@ class Train {
         this.nextStation
       ]
     )
+    .then( () => {
+      return this
+    })
+    .catch( err => { throw err } )
   }
 }
 

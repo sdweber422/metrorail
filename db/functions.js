@@ -7,7 +7,9 @@ const getNextStation = function(current_station){
     let nextStationNumber = result[0].station_number % result[0].count + 1
     return db.one(`SELECT station_name FROM stations WHERE station_number = $1`, nextStationNumber)
   })
-    .then( result => result.station_name )
+  .then( result => {
+    return result.station_name
+  })
 }
 
 module.exports = { getNextStation }

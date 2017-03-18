@@ -1,0 +1,18 @@
+html
+  body
+    block content
+      h1 Delete a station in the database
+      form( id='form', method='GET', action=`/api/stations/delete/`)
+        label Station Name:
+        select( type='text', name='station', onchange='stationToDelete(this.value)' )
+          for station in stations
+            option( value=`${station.stationName}`) #{station.stationName} : #{station.stationNumber}
+        br
+        br
+
+        button( type='submit' ) Submit
+
+        script.
+          function stationToDelete( value ) {
+            document.getElementById( 'form' ).setAttribute( 'action', `/api/stations/delete/${value}`)
+            }

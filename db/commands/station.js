@@ -12,7 +12,12 @@ class Station {
   }
 
   static getAllStations() {
-    return db.any( `SELECT * FROM stations` )
+    return db.any( `SELECT * FROM stations ORDER BY station_number ASC` )
+    .then( stations =>
+      Promise.all( stations.map( station =>
+        Station.findByLocation( station.station_name ) )
+      )
+    )
   }
 
   static getStationID( stationName ) {
@@ -100,7 +105,7 @@ class Station {
       stations
       `
     return db.one( stationCount )
-    .then( result => result.count )
+    .then( result => +result.count )
   }
 
   static getPreviousStation( stationName ) {
@@ -207,7 +212,7 @@ class Station {
     return Station.count()
     .then( count => {
       if ( stationData.stationNumber > count || stationData.stationNumber < 1 ) {
-        stationData.stationNumber = parseInt( count ) + 1
+        stationData.stationNumber = count + 1
       }
       return stationData.stationNumber
     })
@@ -254,43 +259,71 @@ class Station {
     .catch( err => { throw err } )
   }
 
-  static update() {
-    let updateStation =
-      `
-      UPDATE
-        stations
-      SET
-        station_number = $1
-      WHERE
-        station_name = $2
-      `
-    return db.none(
-      updateStation,
-      [
-        this.stationNumber,
-        this.stationName
-      ]
-    )
+  update() {
+    return db.one(`SELECT station_number FROM stations WHERE station_name = $1`, this.stationName)
+    .then( station => station.station_number)
+    .then( oldStationNumber => {
+      let newStationNumber = this.stationNumber
+      console.log( 'oldStationNumber', oldStationNumber )
+      console.log( 'newStationNumber', newStationNumber )
+      if( oldStationNumber > newStationNumber ){
+        db.none(`UPDATE stations SET station_number = station_number + 1 WHERE station_number < $1 AND station_number >= $2`, [oldStationNumber, newStationNumber])
+      }
+      if( oldStationNumber < newStationNumber ){
+        db.none(`UPDATE stations SET station_number = station_number - 1 WHERE station_number > $1 AND station_number <= $2`, [oldStationNumber, newStationNumber])
+      }
+    })
+    .then( ()=> {
+      let updateStation =
+        `
+        UPDATE
+          stations
+        SET
+          station_number = $1
+        WHERE
+          station_name = $2
+        `
+
+      return db.none(
+        updateStation,
+        [
+          this.stationNumber,
+          this.stationName
+        ]
+      )
+    })
+    .then( () => this )
     .catch( err => { throw err } )
   }
 
   delete() {
-    let deleteTrain =
+    let deleteStation =
       `
       DELETE FROM
         stations
       WHERE
         station_number = $1
       `
-    return db.none( deleteTrain, this.stationNumber )
+
+    return db.none( deleteStation, this.stationNumber )
+    .then( () => db.none(
+      `
+      UPDATE
+        stations
+      SET
+        station_number = station_number - 1
+      WHERE
+        station_number > $1
+      `,
+      this.stationNumber )
     .then( () => {
-      this.stationNumber = null
-      this.stationName = null
+      let newStation = new Station( this )
+      delete this.stationNumber
+      delete this.stationName
+      return newStation
     })
-  }
+    .catch( err => { throw err } )
+  )}
 }
 
 module.exports = Station
-
-  // Station.create( { stationName: 'Bromptonacious', stationNumber: 555 } )
-  // .then( results => console.log( 'results', results ))

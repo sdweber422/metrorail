@@ -22,7 +22,12 @@ class Passenger {
   }
 
   static getAllPassengers() {
-    return db.any( `SELECT * FROM passengers` )
+    return db.any( `SELECT * FROM passengers ORDER BY id ASC` )
+    .then( passengers => Promise.all(
+      passengers.map( passenger =>
+        Passenger.findByID( passenger.id )
+      )
+    ))
   }
 
   static create( passengerData ) {
@@ -105,10 +110,10 @@ class Passenger {
       if( !result.length ){
         throw new Error(`Train ${trainNumber} does not exist`)
       }
+      return db.any(`SELECT * FROM passengers WHERE train_number = $1`, trainNumber)
     })
-    return db.any(`SELECT * FROM passengers WHERE train_number = $1`, trainNumber)
     .then( results => {
-      if( !result.length ){
+      if( !results.length ){
         throw new Error(`Train ${trainNumber} does not have any passengers`)
       }
       return Promise.all(results.map( passenger => {
@@ -142,7 +147,7 @@ class Passenger {
     `INSERT INTO passengers (id, passenger_name, origin, destination, train_number, station_name)
     VALUES ( DEFAULT, $1, $2, $3, $4, $5) RETURNING *`,
     [ this.passengerName, this.origin, this.destination, this.trainNumber, this.stationName ])
-    .catch( err => err )
+    .catch( err => { throw new Error('Name is too short') } )
   }
 
   update() {
@@ -150,12 +155,27 @@ class Passenger {
     `UPDATE passengers SET (passenger_name, origin, destination, train_number, station_name)
     = ( $2, $3, $4, $5, $6 ) WHERE id = $1`,
     [ this.id, this.passengerName, this.origin, this.destination, this.trainNumber, this.stationName ] )
+    .then( () => {
+      return this
+    })
+    .catch( err => { throw err } )
   }
 
   delete() {
     return db.none(
       `DELETE FROM passengers WHERE id = $1`, this.id
     )
+    .then( () => {
+      let newPassenger = new Passenger( this )
+      delete this.id
+      delete this.passengerName
+      delete this.origin
+      delete this.destination
+      delete this.trainNumber
+      delete this.stationName
+      return newPassenger
+    })
+    .catch( err => { throw err } )
   }
 
 
