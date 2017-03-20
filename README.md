@@ -23,10 +23,23 @@ Then migrate with ````$npm run db:migrate````
 
 And seed data with ```$npm run db:seed```
 
+Create the documentation with ```$npm run docs```
+
+And open documentation file with ```$open index.html```
+
 Start the server with ```$npm start```
 
 Then navigate to http://localhost:3000 to interact with the api, or input commands in the terminal.
 
 ## Usage and Examples
 
+Here are some example terminal uses for interacting with the API.
 
+'''
+curl -X GET http://localhost:3000/api/trains/
+
+curl -X POST http://localhost:3000/api/passengers/create -d '{ "passengerName": "Mary", "Origin":"Parkside", "Destination":null, "trainNumber":2, "stationName":"Parkside" }' --header "Content-Type:application/json
+
+curl -X PUT http://localhost:3000/api/stations/update/Downtown -d '{ "stationNumber": "9" }' --header "Content-type:application/json"
+
+curl -X DELETE http://localhost:3000/api/passengers/delete/1
