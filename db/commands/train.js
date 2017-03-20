@@ -45,9 +45,12 @@ class Train {
   }
 
   static getTrainNumber( currentStation ) {
-    return db.one( `SELECT * FROM trains WHERE current_station = $1`, currentStation )
+    return db.any( `SELECT * FROM trains WHERE current_station = $1`, currentStation )
     .then( train => {
-      return train.train_number
+      if ( !train.length ) {
+        throw new Error( 'No train at given station' )
+      }
+      return train[0].train_number
     })
     .catch( err => {
       throw err
