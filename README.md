@@ -6,8 +6,8 @@ This particular city has a simple transit system: just one circular train line w
 
 Base repository for the [MetroRail goals](https://github.com/GuildCrafts/web-development-js/issues?utf8=%E2%9C%93&q=metrorail%20).
 
-View the [126](./contract126.md) for this project.
-View the [127](./contract127.md) for this project.
+View the [126](./contract126.md) for this previous project contract and specs.
+View the [127](./contract127.md) for this project contract and specs.
 
 ## Installation and Setup
 
