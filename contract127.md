@@ -75,13 +75,13 @@ Create models with interfaces to satisfy the following user stories, assuming th
  - [x] use HTTP POST requests…
  - [x] to create a new train.
  - [x] to create a new station.
- - [x]to create a new passenger.
+ - [x] to create a new passenger.
  - [ ] use HTTP PUT or HTTP PATCH requests…
  - [x] to update a train.
  - [x] to update a station.
  - [x] to update a passenger.
  - [ ] use HTTP DELETE requests…
- - [x]to delete a train.
+ - [x] to delete a train.
  - [x] to delete a station.
  - [x] to delete a passenger.
  - [x] receive appropriate and descriptive error messages.
