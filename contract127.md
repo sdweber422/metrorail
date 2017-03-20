@@ -65,43 +65,43 @@ Expose the following commands (and more, if you need) using the scripts property
 Create models with interfaces to satisfy the following user stories, assuming the “user” in this case is a programmer consuming your web API.
 
  As a user of the API, I can…
- use HTTP GET requests…
- to receive a list of all trains.
- to receive a list of all stations.
- to receive a list of all passengers.
- to find trains by number or their next station.
- to find stations by location or ID.
- to find passengers by name, train, or current location.
- use HTTP POST requests…
- to create a new train.
- to create a new station.
- to create a new passenger.
- use HTTP PUT or HTTP PATCH requests…
- to update a train.
- to update a station.
- to update a passenger.
- use HTTP DELETE requests…
- to delete a train.
- to delete a station.
- to delete a passenger.
- receive appropriate and descriptive error messages.
- run unit tests that exercise the specs for every route defined.
- run behavior (or end-to-end) tests that exercise use cases in their entirety.
-Design & Architecture
+ - [x] use HTTP GET requests…
+ - [x] to receive a list of all trains.
+ - [x] to receive a list of all stations.
+ - [x] to receive a list of all passengers.
+ - [x] to find trains by number or their next station.
+ - [x] to find stations by location or ID.
+ - [x] to find passengers by name, train, or current location.
+ - [x] use HTTP POST requests…
+ - [x] to create a new train.
+ - [x] to create a new station.
+ - [x]to create a new passenger.
+ - [ ] use HTTP PUT or HTTP PATCH requests…
+ - [x] to update a train.
+ - [x] to update a station.
+ - [x] to update a passenger.
+ - [ ] use HTTP DELETE requests…
+ - [x]to delete a train.
+ - [x] to delete a station.
+ - [x] to delete a passenger.
+ - [x] receive appropriate and descriptive error messages.
+ - [ ] run unit tests that exercise the specs for every route defined.
+ - [ ] run behavior (or end-to-end) tests that exercise use cases in their entirety.
+ Design & Architecture
 
- All API endpoints follow a RESTful design approach.
- Files are organized and named demonstrating clear separation of concerns: web server, routing, data model, database connection/adapter, tests, etc.
- Authentication is enforced for all write operations.
- Authentication is enforced for some read operations (you determine which data should be unprotected and publicly available).
+ - [x] All API endpoints follow a RESTful design approach.
+ - [x] Files are organized and named demonstrating clear separation of concerns: web server, routing, data model, database connection/adapter, tests, etc.
+ - [ ] Authentication is enforced for all write operations.
+ - [ ] Authentication is enforced for some read operations (you determine which data should be unprotected and publicly available).
  Documentation produced is accurate and easily referenced.
- HTTP responses use the correct status code header.
- HTTP responses use the correct content type header.
+ - [x] HTTP responses use the correct status code header.
+ - [x] HTTP responses use the correct content type header.
 Required
 
- The artifact produced is properly licensed, preferably with the MIT license.
+ - [x] The artifact produced is properly licensed, preferably with the MIT license.
 Stretch
 
-Build an alternate API using GraphQL and serve it at the route /graphql.
+ - [ ] Build an alternate API using GraphQL and serve it at the route /graphql.
 
  All data and actions accessible via /api are possible via /graphql.
 Quality Rubric
