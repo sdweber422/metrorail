@@ -6,6 +6,7 @@ router.get( '/', function( request, response, next ) {
 })
 
 router.get( '/api', function( request, response, next ) {
+  response.setHeader( 'content-type', 'text/html' )
   response.render( 'index', { Hello: 'Hello there' } )
 })
 
