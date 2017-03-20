@@ -22,8 +22,21 @@ describe('Train', function() {
     expect( Train ).to.be.a( 'function' )
   })
 
+  describe( '.getAllTrains', function() {
+    context( 'when called', function() {
+      it( 'should return an array of Train objects representing all trains in the database', function() {
+        Train.getAllTrains()
+        .then( allTrains => {
+          expect( allTrains.length ).to.eql( 4 )
+          expect( allTrains[0].train_number ).to.eql( 1 )
+          expect( allTrains[2].capacity ).to.eql( 4000 )
+        })
+      })
+    })
+  })
+
   describe('.getTrainNumber', function() {
-    context('when given the station number "Downtown"', function() {
+    context('when given the station location "Downtown"', function() {
       it('should return train number 1', function() {
         return Train.getTrainNumber( 'Downtown' )
         .then( trainNumber => {
@@ -70,6 +83,37 @@ describe('Train', function() {
           expect( createdTrain.numberOfPassengers ).to.eql( 0 )
           expect( createdTrain.currentStation ).to.eql( 'Parkside' )
           expect( createdTrain.nextStation ).to.eql( 'Grand Boulevard' )
+        })
+      })
+    })
+  })
+
+  describe( '.getNextStation', function() {
+    context( 'when given the station location \'Downtown\'', function() {
+      it( 'should return \'Elm Street\'', function() {
+        return Train.getNextStation( 'Downtown' )
+        .then( nextStation => {
+          expect( nextStation ).to.eql( 'Elm Street' )
+        })
+      })
+    })
+    context( 'when given a station location that does not exist in the database', function() {
+      it( 'should return a error', function() {
+        return Train.getNextStation( 'Brompton' )
+        .catch( err => {
+          expect( err ).to.not.be.undefined
+          expect( err ).to.be.instanceof( Error )
+          expect( err.message ).to.eql( 'Cannot read property \'station_number\' of undefined' )
+        })
+      })
+    })
+    context( 'when not given a parameter', function() {
+      it( 'should throw a \'there is no parameter $1\' error', function() {
+        return Train.getNextStation()
+        .catch( err => {
+          expect( err ).to.not.be.undefined
+          expect( err ).to.be.instanceof( Error )
+          expect( err.message ).to.eql( 'there is no parameter $1' )
         })
       })
     })

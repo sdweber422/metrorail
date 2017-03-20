@@ -28,6 +28,7 @@ class Train {
     })
     .then( train => train.save() )
     .then( train => Train.find(trainData.trainNumber))
+    .catch( err => { throw err } )
   }
 
 
@@ -59,12 +60,13 @@ class Train {
 
   static getNextStation( currentStation ) {
     return functions.getNextStation( currentStation )
-    .then( result => result )
+    .catch( err => { throw err } )
   }
 
   getNextStation() {
     return functions.getNextStation( this.currentStation )
     .then( result => this.nextStation = result )
+    .catch( err => { throw err } )
   }
 
   save(){
@@ -87,7 +89,29 @@ class Train {
   }
 
   getPassengers(){
-    return this.numberOfPassengers
+    return db.any(
+      `
+      SELECT
+        *
+      FROM
+        passengers
+      WHERE
+      passengers.train_number = $1
+      `,
+      this.trainNumber
+    )
+    .then( passengers => {
+      return passengers.map( passenger => {
+        return new Passenger({
+          id: passenger.id,
+          passengerName: passenger.passenger_name,
+          destination: passenger.destination,
+          trainNumber: passenger.train_number,
+          stationName: passenger.stationName,
+          origin: passenger.origin
+        })
+      })
+    })
   }
 
   isFull(){
@@ -255,3 +279,5 @@ class Train {
 }
 
 module.exports = Train
+
+Train.create({ })
