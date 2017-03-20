@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "export NODE_ENV='development' && nodemon ./bin/www",
-    "test": "export NODE_ENV='test' && node db/seeds/seed.js && mocha --recursive",
-    "test:watch": "export NODE_ENV='test' && node db/seeds/seed.js && mocha --recursive -w",
+    "test": "export NODE_ENV='test' && mocha ./test/spec/* --recursive",
+    "test:watch": "export NODE_ENV='test' && mocha ./test/spec/* --recursive -w",
     "lint": "eslint ./routes ./db ./test ./views",
     "db:create": "export NODE_ENV='development' && createdb metrorail-development && createdb metrorail-test",
     "db:migrate": "npm run psql:test && npm run psql:development",

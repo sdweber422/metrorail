@@ -1,9 +1,9 @@
 const chai = require( 'chai' )
 const expect = chai.expect
 const assert = chai.assert
-const db = require( '../db/config' ).db
-const Train = require( '../db/commands/train' )
-const Passenger = require( '../db/commands/passenger' )
+const db = require( '../../db/config' ).db
+const Train = require( '../../db/commands/train' )
+const Passenger = require( '../../db/commands/passenger' )
 
 
 describe('Passenger', function() {
